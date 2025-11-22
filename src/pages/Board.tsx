@@ -7,7 +7,7 @@ import BoardListItem from "@/components/board/BoardListItem";
 import { useState, useEffect } from "react";
 
 interface Board {
-  id: string;
+  id: string; // id 추가
   name: string;
   memberCount: number;
 }
@@ -20,17 +20,18 @@ const Board = () => {
   useEffect(() => {
     const fetchBoards = async () => {
       try {
-        const res = await fetch("/board");
+        const res = await fetch("http://localhost:8080/board/");
         const json = await res.json();
 
         if (json.code === 200 && Array.isArray(json.data)) {
-          const boards: Board[] = json.data.map((name, idx) => ({
-            id: String(idx + 1),
-            name,
-            memberCount: Math.floor(Math.random() * 1000),
-          }));
-
-          setBoards(boards);
+          // 백엔드에서 id와 memberCount 생성
+          setBoards(
+            json.data.map((name: string, idx: number) => ({
+              id: String(idx + 1),
+              name,
+              memberCount: Math.floor(Math.random() * 1000),
+            }))
+          );
         }
       } catch (err) {
         console.error("Failed to fetch boards:", err);

@@ -1,50 +1,39 @@
+"use client";
+
 import TopNav from "@/components/layout/TopNav";
 import { ArrowLeft, Heart, Send, MessageCircle } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
-import CommentItem from "@/components/board/CommentItem";
+import { useState, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-// 임시 데이터
-const postData: { [key: string]: any } = {
-  "1": {
-    title: "100 사이즈 겨울 옷 나눔합니다",
-    content: "아이가 빨리 커서 거의 새 옷인데 못 입게 되었어요. 필요하신 분께 나눔하고 싶습니다. 댓글 남겨주세요!",
-    author: {
-      name: "김엄마",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=1",
-    },
-    likeCount: 24,
-    isLiked: false,
-  },
-  "2": {
-    title: "아이 옷 사이즈 교환 가능하신 분?",
-    content: "90 사이즈를 100 사이즈로 교환하고 싶어요. 거의 새 것이고 브랜드 옷입니다.",
-    author: {
-      name: "박아빠",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=2",
-    },
-    likeCount: 15,
-    isLiked: false,
-  },
-};
-
-const comments = [
-  { id: "1", author: "엄마1", content: "저 관심있어요! 연락주세요~", time: "5분 전" },
-  { id: "2", author: "육아맘", content: "좋은 나눔 감사합니다 ㅎㅎ", time: "10분 전" },
-  { id: "3", author: "아빠조아", content: "혹시 아직 가능할까요?", time: "15분 전" },
-];
-
 const BoardPost = () => {
   const navigate = useNavigate();
-  const { boardId, postId } = useParams();
-  const post = postData[postId || "1"] || postData["1"];
-  
-  const [isLiked, setIsLiked] = useState(post.isLiked);
-  const [likeCount, setLikeCount] = useState(post.likeCount);
+  const { postId, boardId } = useParams();
+  const [post, setPost] = useState<any>(null);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
   const [comment, setComment] = useState("");
+
+  // 글 내용 가져오기
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (!postId) return;
+      try {
+        const res = await fetch(`http://localhost:8080/board/content?board_id=${postId}`);
+        const json = await res.json();
+        if (json.code === 200) {
+          setPost(json.data);
+          setIsLiked(false);
+          setLikeCount(json.data.liked || 0);
+        }
+      } catch (err) {
+        console.error("Failed to fetch post content:", err);
+      }
+    };
+    fetchPost();
+  }, [postId]);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -53,15 +42,17 @@ const BoardPost = () => {
 
   const handleCommentSubmit = () => {
     if (comment.trim()) {
-      // 댓글 추가 로직 (추후 구현)
+      // TODO: 댓글 등록 API 호출
       setComment("");
     }
   };
 
+  if (!post) return <p className="text-center py-6">로딩 중...</p>;
+
   return (
     <div className="min-h-screen bg-background pt-16 pb-20">
       <TopNav />
-      
+
       {/* 헤더 */}
       <div className="max-w-lg mx-auto px-6 py-4 border-b">
         <div className="flex items-center gap-3">
@@ -69,14 +60,8 @@ const BoardPost = () => {
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-xl font-bold flex-1">{post.title}</h1>
-          <button
-            onClick={handleLike}
-            className="flex items-center gap-1 hover:opacity-70"
-          >
-            <Heart
-              size={24}
-              className={isLiked ? "text-primary fill-primary" : "text-muted-foreground"}
-            />
+          <button onClick={handleLike} className="flex items-center gap-1 hover:opacity-70">
+            <Heart size={24} className={isLiked ? "text-primary fill-primary" : "text-muted-foreground"} />
             <span className="text-sm">{likeCount}</span>
           </button>
         </div>
@@ -86,18 +71,14 @@ const BoardPost = () => {
       <div className="max-w-lg mx-auto px-6 py-6">
         <div className="p-4 bg-card rounded-lg mb-6">
           <p className="text-foreground leading-relaxed mb-4">{post.content}</p>
-          
-          {/* 구분선 */}
-          <div className="border-t my-4" />
-          
+
           {/* 작성자 정보 */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Avatar className="h-10 w-10">
-                <AvatarImage src={post.author.avatar} alt={post.author.name} />
-                <AvatarFallback>{post.author.name[0]}</AvatarFallback>
+                <AvatarFallback>{post.writer[0]}</AvatarFallback>
               </Avatar>
-              <span className="font-semibold text-sm">{post.author.name}</span>
+              <span className="font-semibold text-sm">{post.writer}</span>
             </div>
             <Button
               variant="outline"
@@ -113,20 +94,13 @@ const BoardPost = () => {
 
         {/* 댓글 섹션 */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">
-            댓글 {comments.length}
-          </h2>
-          <div className="divide-y">
-            {comments.map((commentItem) => (
-              <div key={commentItem.id} className="py-3 first:pt-0">
-                <CommentItem comment={commentItem} />
-              </div>
-            ))}
-          </div>
+          <h2 className="text-lg font-semibold mb-4">댓글</h2>
+          {/* 댓글 목록 API 연결 필요 */}
+          <p className="text-sm text-muted-foreground">댓글 기능은 추후 구현 예정</p>
         </div>
       </div>
 
-      {/* 댓글 입력 영역 (하단 고정) */}
+      {/* 댓글 입력 */}
       <div className="fixed bottom-0 left-0 right-0 bg-background border-t">
         <div className="max-w-lg mx-auto px-6 py-3">
           <div className="flex gap-2 items-end">
@@ -136,12 +110,7 @@ const BoardPost = () => {
               onChange={(e) => setComment(e.target.value)}
               className="flex-1 h-[44px] min-h-[44px] max-h-[100px] resize-none py-3"
             />
-            <Button
-              onClick={handleCommentSubmit}
-              size="icon"
-              className="h-[44px] w-[44px] flex-shrink-0"
-              disabled={!comment.trim()}
-            >
+            <Button onClick={handleCommentSubmit} size="icon" className="h-[44px] w-[44px] flex-shrink-0" disabled={!comment.trim()}>
               <Send size={18} />
             </Button>
           </div>

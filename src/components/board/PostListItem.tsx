@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 interface PostListItemProps {
   post: {
-    id: string;
+    id: number | string;      // number도 받을 수 있도록 변경
     title: string;
     likeCount: number;
     commentCount: number;
