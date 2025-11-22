@@ -1,5 +1,5 @@
 import TopNav from "@/components/layout/TopNav";
-import { ArrowLeft, Heart, Send } from "lucide-react";
+import { ArrowLeft, Heart, Send, MessageCircle } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import CommentItem from "@/components/board/CommentItem";
@@ -91,12 +91,23 @@ const BoardPost = () => {
           <div className="border-t my-4" />
           
           {/* 작성자 정보 */}
-          <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={post.author.avatar} alt={post.author.name} />
-              <AvatarFallback>{post.author.name[0]}</AvatarFallback>
-            </Avatar>
-            <span className="font-semibold text-sm">{post.author.name}</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={post.author.avatar} alt={post.author.name} />
+                <AvatarFallback>{post.author.name[0]}</AvatarFallback>
+              </Avatar>
+              <span className="font-semibold text-sm">{post.author.name}</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/chat/1')}
+              className="gap-2"
+            >
+              <MessageCircle size={16} />
+              채팅하기
+            </Button>
           </div>
         </div>
 
