@@ -8,6 +8,7 @@ import ChatRoom from "./pages/ChatRoom";
 import People from "./pages/People";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
+import SellerProfile from "./pages/SellerProfile";
 import Board from "./pages/Board";
 import BoardDetail from "./pages/BoardDetail";
 import BoardPost from "./pages/BoardPost";
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/people" element={<People />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<ProductDetail />} />
+          <Route path="/seller/:id" element={<SellerProfile />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/chat/:id" element={<ChatRoom />} />
           <Route path="/board" element={<Board />} />
