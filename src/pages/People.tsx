@@ -22,8 +22,9 @@ const People = () => {
   useEffect(() => {
     const fetchSellers = async () => {
       try {
-        const res = await fetch("/user/get_sellers"); // FastAPI 엔드포인트
+        const res = await fetch("http://localhost:8080/user/get_sellers"); // FastAPI 엔드포인트
         const data = await res.json();
+        console.log(data)
         if (data.code === 200 && data.data) {
           setSellers(data.data);
         } else {

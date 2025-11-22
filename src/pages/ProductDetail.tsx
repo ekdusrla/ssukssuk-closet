@@ -6,42 +6,67 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-// Mock product data - would come from API/database
-const MOCK_PRODUCT = {
-  id: 1,
-  title: "귀여운 후드 티셔츠",
-  price: 25000,
-  image: "/placeholder.svg",
-  additionalImages: [
-    "/placeholder.svg",
-    "/placeholder.svg",
-    "/placeholder.svg",
-  ],
-  tags: ["활동적인", "사교적인", "편안한"],
-  description: "부드러운 면 소재로 만든 아이들을 위한 편안한 후드 티셔츠입니다. 활동적인 아이들에게 딱 맞는 디자인으로 제작되었습니다.",
-  seller: {
-    id: "seller1",
-    nickname: "엄마손",
-    avatar: "/placeholder.svg",
-  },
+type SellerType = {
+  id: string;
+  nickname: string;
+  avatar: string;
+  bio: string;
+  childrenTags: string[];
+  products: ProductType[];
+};
+
+type ProductType = {
+  title: string;
+  picture: string;
+  price: number;
+  size: number;
+  content: string;
+  tags: string[];
 };
 
 const ProductDetail = () => {
-  const { id } = useParams();
+  const { sellerId, productIdx } = useParams(); // productIdx는 선택된 상품 인덱스
   const navigate = useNavigate();
+  const [seller, setSeller] = useState<SellerType | null>(null);
+  const [product, setProduct] = useState<ProductType | null>(null);
   const [isLiked, setIsLiked] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const handleBuyClick = () => {
-    // Navigate to chat with seller
-    navigate(`/chat/${MOCK_PRODUCT.seller.id}`);
-  };
+  useEffect(() => {
+    if (!sellerId) return;
 
-  const handleSellerClick = () => {
-    // Navigate to seller's page (would be implemented later)
-    navigate(`/seller/${MOCK_PRODUCT.seller.id}`);
-  };
+    const fetchSeller = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`http://localhost:8080/user/get_sellers`);
+        const json = await res.json();
+        if (json.code === 200) {
+          const foundSeller = json.data.find((s: SellerType) => s.nickname === sellerId);
+          if (foundSeller) {
+            setSeller(foundSeller);
+            const idx = productIdx ? parseInt(productIdx, 10) : 0;
+            setProduct(foundSeller.products[idx] || null);
+          }
+        } else {
+          console.error(json.message);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSeller();
+  }, [sellerId, productIdx]);
+
+  if (loading) return <p className="pt-16 text-center">로딩 중...</p>;
+  if (!seller || !product) return <p className="pt-16 text-center">상품을 찾을 수 없습니다.</p>;
+
+  const handleBuyClick = () => navigate(`/chat/${seller.id}`);
+  const handleSellerClick = () => navigate(`/seller/${seller.id}`);
 
   return (
     <div className="min-h-screen bg-background pt-16 pb-20">
@@ -49,41 +74,31 @@ const ProductDetail = () => {
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <div className="flex items-center gap-3 px-4 py-3 border-b">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(-1)}
-          >
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="text-lg font-semibold">상품 상세</h1>
         </div>
 
         <div className="p-4 space-y-6">
-          {/* Product Image and Info */}
+          {/* Product Info */}
           <div className="flex gap-4">
-            {/* Image */}
             <div className="flex-shrink-0 w-48">
               <AspectRatio ratio={1}>
                 <img
-                  src={MOCK_PRODUCT.image}
-                  alt={MOCK_PRODUCT.title}
+                  src={product.picture}
+                  alt={product.title}
                   className="w-full h-full object-cover rounded-lg"
                 />
               </AspectRatio>
             </div>
 
-            {/* Info */}
             <div className="flex-1 flex flex-col">
               <div className="space-y-2">
-                <h2 className="font-semibold text-lg">{MOCK_PRODUCT.title}</h2>
-                <p className="text-xl font-bold text-primary">
-                  {MOCK_PRODUCT.price.toLocaleString()}원
-                </p>
-                
-                {/* Tags */}
+                <h2 className="font-semibold text-lg">{product.title}</h2>
+                <p className="text-xl font-bold text-primary">{product.price.toLocaleString()}원</p>
                 <div className="flex flex-wrap gap-1.5">
-                  {MOCK_PRODUCT.tags.map((tag) => (
+                  {product.tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="text-xs">
                       #{tag}
                     </Badge>
@@ -91,7 +106,6 @@ const ProductDetail = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex gap-2 mt-auto">
                 <Button
                   variant="outline"
@@ -101,10 +115,7 @@ const ProductDetail = () => {
                 >
                   <Heart className={`h-5 w-5 ${isLiked ? "fill-current" : ""}`} />
                 </Button>
-                <Button
-                  onClick={handleBuyClick}
-                  className="flex-1"
-                >
+                <Button onClick={handleBuyClick} className="flex-1">
                   <MessageCircle className="h-4 w-4 mr-2" />
                   구매하기
                 </Button>
@@ -116,34 +127,12 @@ const ProductDetail = () => {
           <Card>
             <CardContent className="p-4">
               <h3 className="font-semibold mb-3">상품 설명</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                {MOCK_PRODUCT.description}
-              </p>
-              
-              {/* Additional Images */}
-              {MOCK_PRODUCT.additionalImages && MOCK_PRODUCT.additionalImages.length > 0 && (
-                <div className="mt-4">
-                  <h4 className="text-sm font-medium mb-2">상품 상세 사진</h4>
-                  <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                    {MOCK_PRODUCT.additionalImages.map((image, index) => (
-                      <div key={index} className="flex-shrink-0 w-32">
-                        <AspectRatio ratio={1}>
-                          <img
-                            src={image}
-                            alt={`${MOCK_PRODUCT.title} 상세 이미지 ${index + 1}`}
-                            className="w-full h-full rounded-lg object-cover"
-                          />
-                        </AspectRatio>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <p className="text-sm text-muted-foreground leading-relaxed">{product.content}</p>
             </CardContent>
           </Card>
 
           {/* Seller Info */}
-          <Card 
+          <Card
             className="cursor-pointer hover:shadow-md transition-shadow"
             onClick={handleSellerClick}
           >
@@ -151,14 +140,12 @@ const ProductDetail = () => {
               <h3 className="font-semibold mb-3">판매자 정보</h3>
               <div className="flex items-center gap-3">
                 <Avatar className="h-12 w-12">
-                  <AvatarImage src={MOCK_PRODUCT.seller.avatar} />
-                  <AvatarFallback>
-                    {MOCK_PRODUCT.seller.nickname.charAt(0)}
-                  </AvatarFallback>
+                  <AvatarImage src={seller.avatar} />
+                  <AvatarFallback>{seller.nickname.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-medium">{MOCK_PRODUCT.seller.nickname}</p>
-                  <p className="text-sm text-muted-foreground">판매자 프로필 보기</p>
+                  <p className="font-medium">{seller.nickname}</p>
+                  <p className="text-sm text-muted-foreground">{seller.bio}</p>
                 </div>
               </div>
             </CardContent>
