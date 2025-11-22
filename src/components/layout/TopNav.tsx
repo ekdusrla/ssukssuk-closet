@@ -15,7 +15,7 @@ const TopNav = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between h-16 px-6">
         {/* 로고 */}
         <NavLink to="/chat" className="flex-shrink-0">
-          <img src={logo} alt="쑥쑥마켓" className="h-10" />
+          <img src={logo} alt="쑥쑥마켓" className="h-20" />
         </NavLink>
 
         {/* 중앙 네비게이션 */}
