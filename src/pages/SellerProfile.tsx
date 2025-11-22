@@ -43,6 +43,11 @@ const SellerProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  // Combine all children's tags
+  const allChildrenTags = Array.from(
+    new Set(MOCK_SELLER.children.flatMap((child) => child.tags))
+  );
+
   const handleChatClick = () => {
     navigate(`/chat/${id}`);
   };
@@ -83,7 +88,7 @@ const SellerProfile = () => {
                 <div className="flex-1 space-y-2">
                   <h2 className="font-semibold text-lg">{MOCK_SELLER.nickname}</h2>
                   <div className="flex flex-wrap gap-1.5">
-                    {MOCK_SELLER.tags.map((tag) => (
+                    {allChildrenTags.map((tag) => (
                       <Badge key={tag} variant="secondary" className="text-xs">
                         #{tag}
                       </Badge>
@@ -132,7 +137,7 @@ const SellerProfile = () => {
           {/* Products Section */}
           <div>
             <h3 className="font-semibold mb-3">판매 상품</h3>
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
               {MOCK_SELLER.products.map((product) => (
                 <Card
                   key={product.id}
