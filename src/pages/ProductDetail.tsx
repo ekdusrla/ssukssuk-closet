@@ -25,7 +25,7 @@ interface SellerType {
 }
 
 const ProductDetail = () => {
-  const { sellerId, productIdx } = useParams<{ sellerId: string; productIdx: string }>();
+  const { productIdx } = useParams<{ productIdx: string }>();
   const navigate = useNavigate();
   const [seller, setSeller] = useState<SellerType | null>(null);
   const [product, setProduct] = useState<ProductType | null>(null);
@@ -33,39 +33,36 @@ const ProductDetail = () => {
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
-    const fetchSellerAndProduct = async () => {
-      setLoading(true);
-      try {
-        // 판매자 정보 가져오기
-        const res = await fetch(`http://3.35.8.64:8080/product`);
-        const json = await res.json();
+    // 임시 데이터
+    const mockProducts: ProductType[] = [
+      { title: "귀여운 아기 원피스", picture: "/placeholder.svg", price: 25000, size: 100, content: "상태 좋은 원피스입니다. 몇 번 입지 않아서 거의 새것이에요!", tags: ["원피스/스커트", "활동적인", "사교적인"] },
+      { title: "여름 반팔티", picture: "/placeholder.svg", price: 15000, size: 90, content: "시원한 여름 티셔츠. 통풍이 잘 되는 면 소재입니다.", tags: ["상의", "활동적인", "낙천적인"] },
+      { title: "아기 운동화", picture: "/placeholder.svg", price: 30000, size: 110, content: "편한 운동화. 발바닥이 부드럽고 쿠션감이 좋아요.", tags: ["신발", "활동적인", "모험적인"] },
+      { title: "겨울 패딩", picture: "/placeholder.svg", price: 45000, size: 100, content: "따뜻한 겨울 패딩. 오리털 충전재로 보온성이 우수합니다.", tags: ["아우터", "신중한", "안정적인"] },
+      { title: "청바지", picture: "/placeholder.svg", price: 20000, size: 100, content: "편한 청바지. 신축성이 좋아서 활동하기 편해요.", tags: ["바지", "활동적인", "사교적인"] },
+      { title: "잠옷 세트", picture: "/placeholder.svg", price: 18000, size: 90, content: "부드러운 잠옷. 면 소재로 피부에 자극이 없습니다.", tags: ["잠옷", "조용한", "감성적인"] },
+      { title: "세트 의류", picture: "/placeholder.svg", price: 35000, size: 100, content: "상하의 세트. 코디 걱정 없이 입히기 좋아요.", tags: ["세트 의류", "창의적인", "사교적인"] },
+      { title: "모자", picture: "/placeholder.svg", price: 8000, size: 50, content: "귀여운 모자. 햇빛 차단 효과도 좋습니다.", tags: ["기타 악세서리", "호기심많은", "낙천적인"] },
+      { title: "유아복 로퍼", picture: "/placeholder.svg", price: 12000, size: 70, content: "12개월 이하 아기용. 부드러운 소재로 제작되었습니다.", tags: ["12개월 이하", "내성적인", "안정적인"] },
+      { title: "꽃무늬 원피스", picture: "/placeholder.svg", price: 28000, size: 110, content: "예쁜 꽃무늬. 봄, 여름에 입기 좋은 디자인입니다.", tags: ["원피스/스커트", "감성적인", "창의적인"] },
+      { title: "티셔츠", picture: "/placeholder.svg", price: 12000, size: 100, content: "기본 티셔츠. 어떤 옷과도 잘 어울려요.", tags: ["상의", "독립적인", "논리적인"] },
+      { title: "후드티", picture: "/placeholder.svg", price: 22000, size: 110, content: "따뜻한 후드티. 안감이 기모로 되어 있습니다.", tags: ["상의", "리더십", "협동적인"] },
+    ];
 
-        if (json.code === 200) {
-          // nickname 기준으로 판매자 찾기
-          const foundSeller = json.data.find((s: SellerType) => s.nickname === sellerId);
-          if (!foundSeller) {
-            setSeller(null);
-            setProduct(null);
-            return;
-          }
-          setSeller(foundSeller);
-
-          // 상품 배열 인덱스로 찾기
-          const idx = productIdx ? parseInt(productIdx, 10) : 0;
-          const foundProduct = foundSeller.products[idx] || null;
-          setProduct(foundProduct);
-        } else {
-          console.error(json.message);
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+    const mockSeller: SellerType = {
+      nickname: "엄마123",
+      avatar: "/placeholder.svg",
+      bio: "아이 옷 판매합니다. 깨끗하고 상태 좋은 제품만 올려요!",
+      products: mockProducts
     };
 
-    fetchSellerAndProduct();
-  }, [sellerId, productIdx]);
+    const idx = productIdx ? parseInt(productIdx, 10) : 0;
+    const foundProduct = mockProducts[idx] || null;
+
+    setSeller(mockSeller);
+    setProduct(foundProduct);
+    setLoading(false);
+  }, [productIdx]);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center">로딩 중...</div>;
   if (!seller || !product) return <div className="min-h-screen flex items-center justify-center">상품을 찾을 수 없습니다.</div>;
