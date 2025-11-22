@@ -79,12 +79,12 @@ const Login = () => {
       </div>
 
       {/* 로고 */}
-      <div className="flex justify-center pt-12 pb-6">
+      <div className="flex justify-center pt-4 pb-2">
         <img src={logo} alt="쑥쑥마켓" className="h-72" />
       </div>
 
       {/* 로그인 폼 */}
-      <div className="flex-1 flex items-start justify-center px-6 pt-2">
+      <div className="flex-1 flex items-start justify-center px-6">
         <div className="w-full max-w-sm">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
