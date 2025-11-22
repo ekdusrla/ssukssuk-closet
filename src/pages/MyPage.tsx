@@ -152,10 +152,12 @@ const MyPage = () => {
         <Card>
           <CardContent className="flex gap-4 items-center">
             <Avatar
-              src={userData.avatar}
               className={`h-20 w-20 ${isEditMode ? "cursor-pointer ring-2 ring-primary" : ""}`}
               onClick={() => isEditMode && fileInputRef.current?.click()}
-            />
+            >
+              <AvatarImage src={userData.avatar} />
+              <AvatarFallback>{userData.nickname[0]}</AvatarFallback>
+            </Avatar>
             <div className="flex-1 space-y-1">
               <h2 className="font-semibold text-lg">{userData.nickname}</h2>
               <p className="text-xs text-muted-foreground">{userData.bio}</p>
