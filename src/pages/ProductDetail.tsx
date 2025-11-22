@@ -58,7 +58,7 @@ const ProductDetail = () => {
           {/* Product Image and Info */}
           <div className="flex gap-4">
             {/* Image */}
-            <div className="flex-shrink-0 w-32">
+            <div className="flex-shrink-0 w-48">
               <AspectRatio ratio={1}>
                 <img
                   src={MOCK_PRODUCT.image}
