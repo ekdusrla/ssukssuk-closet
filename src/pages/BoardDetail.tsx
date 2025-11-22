@@ -49,7 +49,7 @@ const BoardDetail = () => {
               className="pl-10"
             />
           </div>
-          <Button size="icon" className="flex-shrink-0">
+          <Button size="icon" className="flex-shrink-0" onClick={() => navigate(`/board/${id}/write`)}>
             <Plus size={20} />
           </Button>
         </div>
