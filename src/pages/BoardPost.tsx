@@ -75,10 +75,9 @@ const BoardPost = () => {
 
       {/* 본문 */}
       <div className="max-w-lg mx-auto px-6 py-6">
-        <p className="text-foreground leading-relaxed mb-6">{post.content}</p>
-
-        {/* 구분선 */}
-        <div className="border-t my-6" />
+        <div className="p-4 bg-card rounded-lg mb-6">
+          <p className="text-foreground leading-relaxed">{post.content}</p>
+        </div>
 
         {/* 댓글 섹션 */}
         <div>
@@ -103,7 +102,7 @@ const BoardPost = () => {
               placeholder="댓글을 입력하세요"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="flex-1 min-h-[44px] max-h-[100px] resize-none"
+              className="flex-1 h-[44px] min-h-[44px] max-h-[100px] resize-none py-3"
             />
             <Button
               onClick={handleCommentSubmit}
