@@ -99,7 +99,7 @@ const ChatRoom = () => {
       const messageText = newMessage.trim();
       
       try {
-        const response = await fetch(`http://3.35.8.64/chat/send?other_user=${encodeURIComponent(id)}&content=${encodeURIComponent(messageText)}`, {
+        const response = await fetch(`http://localhost:8080/chat/send?other_user=${encodeURIComponent(id)}&content=${encodeURIComponent(messageText)}`, {
           method: 'POST',
           credentials: 'include',
         });

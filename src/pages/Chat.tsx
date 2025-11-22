@@ -40,7 +40,7 @@ const Chat = () => {
 
     const fetchChatRooms = async () => {
       try {
-        const response = await fetch('http://3.35.8.64/chat/chat/rooms', {
+        const response = await fetch('http://localhost:8080/chat/chat/rooms', {
           credentials: 'include',
         });
 
