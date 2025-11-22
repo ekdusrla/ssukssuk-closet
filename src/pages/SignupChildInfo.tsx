@@ -93,7 +93,7 @@ const SignupChildInfo = () => {
     }
 
     try {
-      const response = await fetch("http://3.35.8.64/sign/up", {
+      const response = await fetch("http://3.35.8.64/board/up", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
