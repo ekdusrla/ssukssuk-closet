@@ -54,18 +54,16 @@ const Chat = () => {
       <TopNav />
       
       {/* 검색 영역 */}
-      <div className="sticky top-16 bg-card border-b border-border z-40">
-        <div className="max-w-lg mx-auto px-4 py-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="채팅 상대방 검색"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-input border-0 rounded-full"
-            />
-          </div>
+      <div className="max-w-lg mx-auto px-6 py-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
+          <Input
+            type="text"
+            placeholder="채팅 검색"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
         </div>
       </div>
 
