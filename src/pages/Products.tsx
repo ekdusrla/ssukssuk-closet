@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import TopNav from "@/components/layout/TopNav";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,6 +58,7 @@ const MOCK_PRODUCTS = [
 ];
 
 const Products = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -185,7 +187,11 @@ const Products = () => {
                   {/* First Row */}
                   <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
                     {firstRow.map((product) => (
-                      <Card key={product.id} className="flex-shrink-0 w-36 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+                      <Card 
+                        key={product.id} 
+                        className="flex-shrink-0 w-36 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+                        onClick={() => navigate(`/products/${product.id}`)}
+                      >
                         <CardContent className="p-0">
                           <AspectRatio ratio={1}>
                             <img
@@ -205,7 +211,11 @@ const Products = () => {
                   {secondRow.length > 0 && (
                     <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
                       {secondRow.map((product) => (
-                        <Card key={product.id} className="flex-shrink-0 w-36 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+                        <Card 
+                          key={product.id} 
+                          className="flex-shrink-0 w-36 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+                          onClick={() => navigate(`/products/${product.id}`)}
+                        >
                           <CardContent className="p-0">
                             <AspectRatio ratio={1}>
                               <img
