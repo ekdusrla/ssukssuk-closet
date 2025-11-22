@@ -1,8 +1,9 @@
 import TopNav from "@/components/layout/TopNav";
 import { Input } from "@/components/ui/input";
-import { Search, ArrowLeft } from "lucide-react";
+import { Search, ArrowLeft, Plus } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import PostListItem from "@/components/board/PostListItem";
+import { Button } from "@/components/ui/button";
 
 // 임시 데이터
 const posts = [
@@ -40,12 +41,17 @@ const BoardDetail = () => {
         </div>
         
         {/* 검색 영역 */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
-          <Input
-            placeholder="제목, 내용 검색"
-            className="pl-10"
-          />
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
+            <Input
+              placeholder="제목, 내용 검색"
+              className="pl-10"
+            />
+          </div>
+          <Button size="icon" className="flex-shrink-0">
+            <Plus size={20} />
+          </Button>
         </div>
       </div>
 
