@@ -58,23 +58,21 @@ const MOCK_PRODUCTS = [
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const toggleKeyword = (keyword: string) => {
-    setSelectedKeywords((prev) =>
-      prev.includes(keyword)
-        ? prev.filter((k) => k !== keyword)
-        : [...prev, keyword]
-    );
+  // Group products by keywords
+  const getProductsByKeyword = (keyword: string) => {
+    return MOCK_PRODUCTS.filter((product) => {
+      const categoryMatch = !selectedCategory || product.category === selectedCategory;
+      const keywordMatch = product.tags.includes(keyword);
+      return categoryMatch && keywordMatch;
+    });
   };
 
-  const filteredProducts = MOCK_PRODUCTS.filter((product) => {
-    const categoryMatch = !selectedCategory || product.category === selectedCategory;
-    const keywordMatch = selectedKeywords.length === 0 || 
-      selectedKeywords.some((keyword) => product.tags.includes(keyword));
-    return categoryMatch && keywordMatch;
-  });
+  // Get keywords that have products
+  const activeKeywords = HASHTAGS.filter((keyword) => 
+    getProductsByKeyword(keyword).length > 0
+  );
 
   return (
     <div className="min-h-screen bg-background pt-16 pb-20">
@@ -120,35 +118,6 @@ const Products = () => {
                   )}
                 </div>
 
-                {/* Keyword Selection */}
-                <div>
-                  <h3 className="font-semibold mb-3">키워드 선택</h3>
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {HASHTAGS.map((tag) => (
-                      <div key={tag} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={tag}
-                          checked={selectedKeywords.includes(tag)}
-                          onCheckedChange={() => toggleKeyword(tag)}
-                        />
-                        <Label htmlFor={tag} className="cursor-pointer">
-                          #{tag}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                  {selectedKeywords.length > 0 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSelectedKeywords([])}
-                      className="mt-2"
-                    >
-                      전체 해제
-                    </Button>
-                  )}
-                </div>
-
                 <Button
                   onClick={() => setIsFilterOpen(false)}
                   className="w-full"
@@ -160,27 +129,65 @@ const Products = () => {
           </Sheet>
         </div>
 
-        {/* Product Grid */}
-        <div className="grid grid-cols-2 gap-4">
-          {filteredProducts.map((product) => (
-            <Card key={product.id} className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
-              <CardContent className="p-0">
-                <AspectRatio ratio={1}>
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className="w-full h-full object-cover"
-                  />
-                </AspectRatio>
-              </CardContent>
-              <CardFooter className="p-3">
-                <p className="text-sm font-medium line-clamp-2">{product.title}</p>
-              </CardFooter>
-            </Card>
-          ))}
+        {/* Keyword Sections */}
+        <div className="space-y-8">
+          {activeKeywords.map((keyword) => {
+            const products = getProductsByKeyword(keyword);
+            const halfLength = Math.ceil(products.length / 2);
+            const firstRow = products.slice(0, halfLength);
+            const secondRow = products.slice(halfLength);
+            
+            return (
+              <div key={keyword}>
+                <h2 className="text-lg font-semibold mb-4">#{keyword}</h2>
+                <div className="space-y-3">
+                  {/* First Row */}
+                  <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                    {firstRow.map((product) => (
+                      <Card key={product.id} className="flex-shrink-0 w-36 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+                        <CardContent className="p-0">
+                          <AspectRatio ratio={1}>
+                            <img
+                              src={product.image}
+                              alt={product.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </AspectRatio>
+                        </CardContent>
+                        <CardFooter className="p-3">
+                          <p className="text-xs font-medium line-clamp-2">{product.title}</p>
+                        </CardFooter>
+                      </Card>
+                    ))}
+                  </div>
+                  {/* Second Row */}
+                  {secondRow.length > 0 && (
+                    <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                      {secondRow.map((product) => (
+                        <Card key={product.id} className="flex-shrink-0 w-36 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+                          <CardContent className="p-0">
+                            <AspectRatio ratio={1}>
+                              <img
+                                src={product.image}
+                                alt={product.title}
+                                className="w-full h-full object-cover"
+                              />
+                            </AspectRatio>
+                          </CardContent>
+                          <CardFooter className="p-3">
+                            <p className="text-xs font-medium line-clamp-2">{product.title}</p>
+                          </CardFooter>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {filteredProducts.length === 0 && (
+        {activeKeywords.length === 0 && (
           <div className="text-center py-12 text-muted-foreground">
             조건에 맞는 상품이 없습니다.
           </div>
