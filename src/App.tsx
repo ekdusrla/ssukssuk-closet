@@ -12,6 +12,8 @@ import BoardDetail from "./pages/BoardDetail";
 import BoardPost from "./pages/BoardPost";
 import BoardWrite from "./pages/BoardWrite";
 import MyPage from "./pages/MyPage";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +35,8 @@ const App = () => (
           <Route path="/board/:id/write" element={<BoardWrite />} />
           <Route path="/board/:boardId/post/:postId" element={<BoardPost />} />
           <Route path="/mypage" element={<MyPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

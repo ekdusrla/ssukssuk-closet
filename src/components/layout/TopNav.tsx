@@ -1,8 +1,14 @@
 import { NavLink } from "@/components/NavLink";
 import { User } from "lucide-react";
 import logo from "@/assets/logo.png";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const TopNav = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  
   const navItems = [
     { to: "/people", label: "사람 추천" },
     { to: "/products", label: "상품 추천" },
@@ -32,15 +38,21 @@ const TopNav = () => {
           ))}
         </div>
 
-        {/* 마이페이지 */}
-        <NavLink
-          to="/mypage"
-          className="flex items-center gap-2 text-foreground/70 font-medium transition-colors hover:text-foreground"
-          activeClassName="text-primary"
-        >
-          <User className="w-5 h-5" />
-          <span>마이페이지</span>
-        </NavLink>
+        {/* 마이페이지 / 로그인 */}
+        {isAuthenticated ? (
+          <NavLink
+            to="/mypage"
+            className="flex items-center gap-2 text-foreground/70 font-medium transition-colors hover:text-foreground"
+            activeClassName="text-primary"
+          >
+            <User className="w-5 h-5" />
+            <span>마이페이지</span>
+          </NavLink>
+        ) : (
+          <Button variant="outline" onClick={() => navigate("/login")}>
+            로그인
+          </Button>
+        )}
       </div>
     </nav>
   );
