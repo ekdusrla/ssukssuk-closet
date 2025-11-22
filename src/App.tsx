@@ -10,6 +10,7 @@ import Products from "./pages/Products";
 import Board from "./pages/Board";
 import BoardDetail from "./pages/BoardDetail";
 import BoardPost from "./pages/BoardPost";
+import BoardWrite from "./pages/BoardWrite";
 import MyPage from "./pages/MyPage";
 import NotFound from "./pages/NotFound";
 
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/chat/:id" element={<ChatRoom />} />
           <Route path="/board" element={<Board />} />
           <Route path="/board/:id" element={<BoardDetail />} />
+          <Route path="/board/:id/write" element={<BoardWrite />} />
           <Route path="/board/:boardId/post/:postId" element={<BoardPost />} />
           <Route path="/mypage" element={<MyPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
