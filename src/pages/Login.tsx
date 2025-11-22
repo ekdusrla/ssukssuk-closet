@@ -38,17 +38,14 @@ const Login = () => {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const response = await fetch("http://3.35.8.64/sign/in", {
+
+      const response = await fetch("http://localhost:8080/sign/in", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          nickname: data.nickname,
-          pw: data.pw,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nickname: data.nickname, pw: data.pw }),
         credentials: "include",
       });
+
 
       const result = await response.json();
 
@@ -63,6 +60,7 @@ const Login = () => {
       toast.error("로그인 중 오류가 발생했습니다");
     }
   };
+
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
