@@ -2,9 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send } from "lucide-react";
+import { Send, Plus } from "lucide-react";
 import ChatHeader from "@/components/chat/ChatHeader";
 import MessageBubble from "@/components/chat/MessageBubble";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
@@ -111,6 +112,10 @@ const ChatRoom = () => {
     e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
   };
 
+  const handleAttachFile = () => {
+    toast.info("사진 첨부 기능은 준비 중입니다");
+  };
+
   return (
     <div className="flex flex-col h-screen bg-background">
       {/* 헤더 */}
@@ -133,6 +138,14 @@ const ChatRoom = () => {
       {/* 메시지 입력 영역 */}
       <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-end gap-2">
+          <Button
+            onClick={handleAttachFile}
+            variant="ghost"
+            size="icon"
+            className="flex-shrink-0 w-11 h-11"
+          >
+            <Plus className="w-5 h-5" />
+          </Button>
           <Textarea
             ref={textareaRef}
             value={newMessage}
