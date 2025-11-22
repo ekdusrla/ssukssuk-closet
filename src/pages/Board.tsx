@@ -2,14 +2,15 @@ import TopNav from "@/components/layout/TopNav";
 import { Input } from "@/components/ui/input";
 import { Search, Star } from "lucide-react";
 import BoardListItem from "@/components/board/BoardListItem";
+import { useState } from "react";
 
 // 임시 데이터
-const favoriteBoards = [
+const initialFavoriteBoards = [
   { id: "1", name: "유아복 교환", memberCount: 1234, isFavorite: true },
   { id: "2", name: "육아 꿀팁", memberCount: 5678, isFavorite: true },
 ];
 
-const popularBoards = [
+const initialPopularBoards = [
   { id: "3", name: "유아용품 거래", memberCount: 9012, isFavorite: false },
   { id: "4", name: "육아 고민 상담", memberCount: 7890, isFavorite: false },
   { id: "5", name: "유아 간식 레시피", memberCount: 6543, isFavorite: false },
@@ -17,6 +18,26 @@ const popularBoards = [
 ];
 
 const Board = () => {
+  const [favoriteBoards, setFavoriteBoards] = useState(initialFavoriteBoards);
+  const [popularBoards, setPopularBoards] = useState(initialPopularBoards);
+
+  const toggleFavorite = (boardId: string) => {
+    // 즐겨찾기에서 찾기
+    const favoriteBoard = favoriteBoards.find(b => b.id === boardId);
+    
+    if (favoriteBoard) {
+      // 즐겨찾기에서 제거하고 둘러보기로 이동
+      setFavoriteBoards(favoriteBoards.filter(b => b.id !== boardId));
+      setPopularBoards([...popularBoards, { ...favoriteBoard, isFavorite: false }]);
+    } else {
+      // 둘러보기에서 찾아서 즐겨찾기로 이동
+      const popularBoard = popularBoards.find(b => b.id === boardId);
+      if (popularBoard) {
+        setPopularBoards(popularBoards.filter(b => b.id !== boardId));
+        setFavoriteBoards([...favoriteBoards, { ...popularBoard, isFavorite: true }]);
+      }
+    }
+  };
   return (
     <div className="min-h-screen bg-background pt-16">
       <TopNav />
@@ -42,7 +63,7 @@ const Board = () => {
           </div>
           <div className="space-y-2">
             {favoriteBoards.map((board) => (
-              <BoardListItem key={board.id} board={board} />
+              <BoardListItem key={board.id} board={board} onToggleFavorite={toggleFavorite} />
             ))}
           </div>
         </div>
@@ -52,7 +73,7 @@ const Board = () => {
           <h2 className="text-lg font-semibold mb-4">둘러보기</h2>
           <div className="space-y-2">
             {popularBoards.map((board) => (
-              <BoardListItem key={board.id} board={board} />
+              <BoardListItem key={board.id} board={board} onToggleFavorite={toggleFavorite} />
             ))}
           </div>
         </div>
