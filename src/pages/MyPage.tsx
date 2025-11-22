@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Edit, Plus } from "lucide-react";
 import TopNav from "@/components/layout/TopNav";
@@ -43,6 +43,7 @@ const MyPage = () => {
 
   const [addProductDialog, setAddProductDialog] = useState(false);
   const [editProductDialog, setEditProductDialog] = useState(false);
+  const [productDetailDialog, setProductDetailDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null);
 
   const [productForm, setProductForm] = useState({
@@ -61,9 +62,7 @@ const MyPage = () => {
         credentials: "include",
       });
       const result = await res.json();
-      if (result.code === 200) {
-        setUserData(result.data);
-      }
+      if (result.code === 200) setUserData(result.data);
     };
     loadUser();
   }, []);
@@ -71,7 +70,6 @@ const MyPage = () => {
   // 상품 수정
   const handleProductUpdateAPI = async () => {
     if (!selectedProduct || !userData) return;
-
     const body = {
       title: productForm.title,
       picture: productForm.image,
@@ -99,7 +97,6 @@ const MyPage = () => {
   // 상품 추가
   const handleAddProductAPI = async () => {
     if (!userData) return;
-
     const body = {
       title: productForm.title,
       picture: productForm.image,
@@ -137,12 +134,27 @@ const MyPage = () => {
     setEditProductDialog(true);
   };
 
+  const openProductDetailDialog = async (product: ProductType) => {
+    // FastAPI에서 상세 정보 가져오기
+    const res = await fetch(
+      `http://localhost:8080/product/title?ti=${encodeURIComponent(product.title)}`
+    );
+    const data = await res.json();
+    if (data.code === 200) {
+      setSelectedProduct(data.data);
+      setProductDetailDialog(true);
+    } else {
+      console.error("상품 불러오기 실패", data);
+    }
+  };
+
   if (!userData) return <p>로딩 중...</p>;
 
   return (
     <div className="min-h-screen bg-background pt-16 pb-20">
       <TopNav />
       <div className="max-w-lg mx-auto p-4 space-y-6">
+        {/* 상단 네비 */}
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-5 w-5" />
@@ -153,7 +165,13 @@ const MyPage = () => {
         {/* User Info */}
         <Card>
           <CardContent className="flex gap-4 items-center">
-            <Avatar src={userData.avatar} className="h-20 w-20" />
+            <Avatar className="h-20 w-20">
+              <img
+                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.nickname}`}
+                alt="avatar"
+                className="h-full w-full object-cover rounded-full"
+              />
+            </Avatar>
             <div className="flex-1 space-y-1">
               <h2 className="font-semibold text-lg">{userData.nickname}</h2>
               <p className="text-xs text-muted-foreground">{userData.bio}</p>
@@ -177,7 +195,11 @@ const MyPage = () => {
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold">판매 상품</h3>
             {isEditMode && (
-              <Button size="sm" variant="outline" onClick={() => setAddProductDialog(true)}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setAddProductDialog(true)}
+              >
                 <Plus className="h-4 w-4 mr-1" /> 추가하기
               </Button>
             )}
@@ -191,94 +213,67 @@ const MyPage = () => {
                 onClick={() =>
                   isEditMode
                     ? openEditProductDialog(product)
-                    : navigate(`/products/${product.title}`)
+                    : openProductDetailDialog(product)
                 }
               >
                 <CardContent className="p-0">
                   <AspectRatio ratio={1}>
-                    <img src={product.picture} className="w-full h-full object-cover" />
+                    <img
+                      src={product.picture}
+                      className="w-full h-full object-cover"
+                    />
                   </AspectRatio>
                 </CardContent>
                 <div className="p-2">
-                  <p className="text-xs font-medium line-clamp-2">{product.title}</p>
+                  <p className="text-xs font-medium line-clamp-2">
+                    {product.title}
+                  </p>
                 </div>
               </Card>
             ))}
           </div>
         </div>
 
-        {/* 상품 수정 다이얼로그 */}
-        <Dialog open={editProductDialog} onOpenChange={setEditProductDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>상품 수정</DialogTitle>
-            </DialogHeader>
-
-            <div className="space-y-4">
-              <Label>제목</Label>
-              <Input
-                value={productForm.title}
-                onChange={(e) => setProductForm({ ...productForm, title: e.target.value })}
-              />
-
-              <Label>가격</Label>
-              <Input
-                value={productForm.price}
-                onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
-              />
-
-              <Label>설명</Label>
-              <Textarea
-                value={productForm.description}
-                onChange={(e) =>
-                  setProductForm({ ...productForm, description: e.target.value })
-                }
-              />
+        {/* 상품 상세 모달 */}
+        <Dialog
+          open={productDetailDialog}
+          onOpenChange={setProductDetailDialog}
+        >
+          <DialogContent className="max-w-2xl">
+            <div className="flex gap-6">
+              {/* 왼쪽 이미지 */}
+              <div className="flex-1">
+                <img
+                  src={selectedProduct?.picture}
+                  className="w-full h-full object-cover rounded-md"
+                />
+              </div>
+              {/* 오른쪽 정보 */}
+              <div className="flex-1 flex flex-col gap-2">
+                <h2 className="text-xl font-bold">
+                  {selectedProduct?.title}
+                </h2>
+                <p className="text-lg font-semibold">
+                  가격: {selectedProduct?.price}
+                </p>
+                <p>사이즈: {selectedProduct?.size}</p>
+                <p className="text-sm">{selectedProduct?.content}</p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {selectedProduct?.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="bg-gray-200 px-2 py-1 rounded text-sm"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
-
             <DialogFooter>
-              <Button variant="outline" onClick={() => setEditProductDialog(false)}>
-                취소
+              <Button variant="outline" onClick={() => setProductDetailDialog(false)}>
+                닫기
               </Button>
-              <Button onClick={handleProductUpdateAPI}>수정 완료</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* 상품 추가 다이얼로그 */}
-        <Dialog open={addProductDialog} onOpenChange={setAddProductDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>상품 추가</DialogTitle>
-            </DialogHeader>
-
-            <div className="space-y-4">
-              <Label>제목</Label>
-              <Input
-                value={productForm.title}
-                onChange={(e) => setProductForm({ ...productForm, title: e.target.value })}
-              />
-
-              <Label>가격</Label>
-              <Input
-                value={productForm.price}
-                onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
-              />
-
-              <Label>설명</Label>
-              <Textarea
-                value={productForm.description}
-                onChange={(e) =>
-                  setProductForm({ ...productForm, description: e.target.value })
-                }
-              />
-            </div>
-
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setAddProductDialog(false)}>
-                취소
-              </Button>
-              <Button onClick={handleAddProductAPI}>상품 올리기</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
