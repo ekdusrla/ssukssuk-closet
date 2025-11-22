@@ -96,11 +96,11 @@ const Products = () => {
                 <SlidersHorizontal className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent>
+            <SheetContent className="flex flex-col">
               <SheetHeader>
                 <SheetTitle>필터 옵션</SheetTitle>
               </SheetHeader>
-              <div className="mt-6 space-y-6">
+              <div className="flex-1 overflow-y-auto mt-6 space-y-6 pr-2">
                 {/* Category Selection */}
                 <div>
                   <h3 className="font-semibold mb-3">의류 종류</h3>
@@ -156,7 +156,9 @@ const Products = () => {
                     </Button>
                   )}
                 </div>
+              </div>
 
+              <div className="pt-4 border-t">
                 <Button
                   onClick={() => setIsFilterOpen(false)}
                   className="w-full"
