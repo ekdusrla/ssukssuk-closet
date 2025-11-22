@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import ChatListItem from "@/components/chat/ChatListItem";
-import BottomNav from "@/components/layout/BottomNav";
 import TopNav from "@/components/layout/TopNav";
 
 // 임시 데이터
@@ -51,7 +50,7 @@ const Chat = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background pb-16 pt-16">
+    <div className="min-h-screen bg-background pt-16">
       <TopNav />
       
       {/* 검색 영역 */}
@@ -86,8 +85,6 @@ const Chat = () => {
           </div>
         )}
       </div>
-
-      <BottomNav />
     </div>
   );
 };
