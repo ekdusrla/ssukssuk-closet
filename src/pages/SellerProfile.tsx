@@ -12,6 +12,7 @@ const MOCK_SELLER = {
   id: "seller1",
   nickname: "엄마손",
   avatar: "/placeholder.svg",
+  bio: "두 아이를 키우는 엄마입니다. 우리 아이들이 입던 깨끗한 옷들을 합리적인 가격에 나눔합니다 😊",
   tags: ["활동적인", "사교적인", "편안한"],
   children: [
     {
@@ -104,6 +105,18 @@ const SellerProfile = () => {
             </CardContent>
           </Card>
 
+          {/* Bio Section */}
+          {MOCK_SELLER.bio && (
+            <Card>
+              <CardContent className="p-4">
+                <h3 className="font-semibold mb-2">소개</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {MOCK_SELLER.bio}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Children Section */}
           <div>
             <h3 className="font-semibold mb-3">아이 정보</h3>
@@ -137,7 +150,7 @@ const SellerProfile = () => {
           {/* Products Section */}
           <div>
             <h3 className="font-semibold mb-3">판매 상품</h3>
-            <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'thin' }}>
               {MOCK_SELLER.products.map((product) => (
                 <Card
                   key={product.id}
