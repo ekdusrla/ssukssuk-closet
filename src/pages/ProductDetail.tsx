@@ -69,23 +69,25 @@ const ProductDetail = () => {
             </div>
 
             {/* Info */}
-            <div className="flex-1 space-y-2">
-              <h2 className="font-semibold text-lg">{MOCK_PRODUCT.title}</h2>
-              <p className="text-xl font-bold text-primary">
-                {MOCK_PRODUCT.price.toLocaleString()}원
-              </p>
-              
-              {/* Tags */}
-              <div className="flex flex-wrap gap-1.5">
-                {MOCK_PRODUCT.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="text-xs">
-                    #{tag}
-                  </Badge>
-                ))}
+            <div className="flex-1 flex flex-col">
+              <div className="space-y-2">
+                <h2 className="font-semibold text-lg">{MOCK_PRODUCT.title}</h2>
+                <p className="text-xl font-bold text-primary">
+                  {MOCK_PRODUCT.price.toLocaleString()}원
+                </p>
+                
+                {/* Tags */}
+                <div className="flex flex-wrap gap-1.5">
+                  {MOCK_PRODUCT.tags.map((tag) => (
+                    <Badge key={tag} variant="secondary" className="text-xs">
+                      #{tag}
+                    </Badge>
+                  ))}
+                </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-2 pt-2">
+              <div className="flex gap-2 mt-auto">
                 <Button
                   variant="outline"
                   size="icon"
