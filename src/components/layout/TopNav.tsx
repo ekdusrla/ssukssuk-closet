@@ -10,7 +10,7 @@ const TopNav = () => {
   const navigate = useNavigate();
   
   const navItems = [
-    { to: "/people", label: "사람 추천" },
+    { to: "/people", label: "판매자 추천" },
     { to: "/products", label: "상품 추천" },
     { to: "/chat", label: "채팅" },
     { to: "/board", label: "게시판" },
