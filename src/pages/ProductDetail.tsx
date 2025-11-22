@@ -14,6 +14,11 @@ const MOCK_PRODUCT = {
   title: "귀여운 후드 티셔츠",
   price: 25000,
   image: "/placeholder.svg",
+  additionalImages: [
+    "/placeholder.svg",
+    "/placeholder.svg",
+    "/placeholder.svg",
+  ],
   tags: ["활동적인", "사교적인", "편안한"],
   description: "부드러운 면 소재로 만든 아이들을 위한 편안한 후드 티셔츠입니다. 활동적인 아이들에게 딱 맞는 디자인으로 제작되었습니다.",
   seller: {
@@ -110,10 +115,25 @@ const ProductDetail = () => {
           {/* Product Description */}
           <Card>
             <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">상품 설명</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <h3 className="font-semibold mb-3">상품 설명</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                 {MOCK_PRODUCT.description}
               </p>
+              
+              {/* Additional Images */}
+              {MOCK_PRODUCT.additionalImages && MOCK_PRODUCT.additionalImages.length > 0 && (
+                <div className="space-y-3 mt-4">
+                  {MOCK_PRODUCT.additionalImages.map((image, index) => (
+                    <div key={index} className="w-full">
+                      <img
+                        src={image}
+                        alt={`${MOCK_PRODUCT.title} 상세 이미지 ${index + 1}`}
+                        className="w-full rounded-lg object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 
