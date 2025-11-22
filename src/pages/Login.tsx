@@ -79,7 +79,7 @@ const Login = () => {
       </div>
 
       {/* 로고 */}
-      <div className="flex justify-center pt-2 pb-0">
+      <div className="flex justify-center pt-2 -mb-8">
         <img src={logo} alt="쑥쑥마켓" className="h-72" />
       </div>
 
