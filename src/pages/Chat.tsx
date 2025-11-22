@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import ChatListItem from "@/components/chat/ChatListItem";
 import BottomNav from "@/components/layout/BottomNav";
+import TopNav from "@/components/layout/TopNav";
 
 // 임시 데이터
 const mockChats = [
@@ -50,11 +51,12 @@ const Chat = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background pb-16">
-      {/* 헤더 */}
-      <div className="sticky top-0 bg-card border-b border-border z-40">
+    <div className="min-h-screen bg-background pb-16 pt-16">
+      <TopNav />
+      
+      {/* 검색 영역 */}
+      <div className="sticky top-16 bg-card border-b border-border z-40">
         <div className="max-w-lg mx-auto px-4 py-3">
-          <h1 className="text-xl font-bold text-foreground mb-3">채팅</h1>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
