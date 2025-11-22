@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
-import logo from "@/assets/logo.png";
+
 
 const signupSchema = z.object({
   nickname: z.string()
@@ -80,13 +80,8 @@ const Signup = () => {
         </button>
       </div>
 
-      {/* 로고 */}
-      <div className="flex justify-center pt-20 pb-12">
-        <img src={logo} alt="쑥쑥마켓" className="h-24" />
-      </div>
-
       {/* 회원가입 폼 */}
-      <div className="flex-1 flex items-start justify-center px-6">
+      <div className="flex-1 flex items-start justify-center px-6 pt-20">
         <div className="w-full max-w-sm">
           <h1 className="text-2xl font-bold text-center mb-8">회원가입</h1>
           <Form {...form}>
