@@ -122,16 +122,21 @@ const ProductDetail = () => {
               
               {/* Additional Images */}
               {MOCK_PRODUCT.additionalImages && MOCK_PRODUCT.additionalImages.length > 0 && (
-                <div className="space-y-3 mt-4">
-                  {MOCK_PRODUCT.additionalImages.map((image, index) => (
-                    <div key={index} className="w-full">
-                      <img
-                        src={image}
-                        alt={`${MOCK_PRODUCT.title} 상세 이미지 ${index + 1}`}
-                        className="w-full rounded-lg object-cover"
-                      />
-                    </div>
-                  ))}
+                <div className="mt-4">
+                  <h4 className="text-sm font-medium mb-2">상품 상세 사진</h4>
+                  <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                    {MOCK_PRODUCT.additionalImages.map((image, index) => (
+                      <div key={index} className="flex-shrink-0 w-32">
+                        <AspectRatio ratio={1}>
+                          <img
+                            src={image}
+                            alt={`${MOCK_PRODUCT.title} 상세 이미지 ${index + 1}`}
+                            className="w-full h-full rounded-lg object-cover"
+                          />
+                        </AspectRatio>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </CardContent>
