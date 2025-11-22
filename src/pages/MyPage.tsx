@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Edit, Plus, X, Upload } from "lucide-react";
+import { ArrowLeft, Edit, Plus, X, Upload, Trash2 } from "lucide-react";
 import TopNav from "@/components/layout/TopNav";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -62,6 +62,7 @@ const MyPage = () => {
   const navigate = useNavigate();
   const [isEditMode, setIsEditMode] = useState(false);
   const [userData, setUserData] = useState(MOCK_USER);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Dialog states
   const [addChildDialog, setAddChildDialog] = useState(false);
@@ -90,6 +91,29 @@ const MyPage = () => {
   const allChildrenTags = Array.from(
     new Set(userData.children.flatMap((child) => child.tags))
   );
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUserData({
+          ...userData,
+          avatar: reader.result as string,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDeletePost = (postId: number) => {
+    if (confirm("정말 이 글을 삭제하시겠습니까?")) {
+      setUserData({
+        ...userData,
+        posts: userData.posts.filter((p) => p.id !== postId),
+      });
+    }
+  };
 
   const calculateAge = (birthdate: string) => {
     const today = new Date();
@@ -287,20 +311,41 @@ const MyPage = () => {
                     <AvatarFallback>{userData.nickname.charAt(0)}</AvatarFallback>
                   </Avatar>
                   {isEditMode && (
-                    <Button
-                      size="icon"
-                      variant="secondary"
-                      className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full"
-                    >
-                      <Upload className="h-3 w-3" />
-                    </Button>
+                    <>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleAvatarChange}
+                      />
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <Upload className="h-3 w-3" />
+                      </Button>
+                    </>
                   )}
                 </div>
 
                 <div className="flex-1 space-y-2">
                   <div>
                     <h2 className="font-semibold text-lg">{userData.nickname}</h2>
-                    <p className="text-xs text-muted-foreground mt-0.5">{userData.location}</p>
+                    {isEditMode ? (
+                      <Input
+                        value={userData.location}
+                        onChange={(e) =>
+                          setUserData({ ...userData, location: e.target.value })
+                        }
+                        className="h-7 text-xs mt-1"
+                        placeholder="지역을 입력하세요"
+                      />
+                    ) : (
+                      <p className="text-xs text-muted-foreground mt-0.5">{userData.location}</p>
+                    )}
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {allChildrenTags.map((tag) => (
@@ -324,16 +369,25 @@ const MyPage = () => {
           </Card>
 
           {/* Bio Section */}
-          {userData.bio && (
-            <Card>
-              <CardContent className="p-4">
-                <h3 className="font-semibold mb-2">소개</h3>
+          <Card>
+            <CardContent className="p-4">
+              <h3 className="font-semibold mb-2">소개</h3>
+              {isEditMode ? (
+                <Textarea
+                  value={userData.bio}
+                  onChange={(e) =>
+                    setUserData({ ...userData, bio: e.target.value })
+                  }
+                  className="text-sm min-h-[80px]"
+                  placeholder="자기소개를 입력하세요"
+                />
+              ) : (
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  {userData.bio}
+                  {userData.bio || "소개 내용이 없습니다."}
                 </p>
-              </CardContent>
-            </Card>
-          )}
+              )}
+            </CardContent>
+          </Card>
 
           {/* Children Section */}
           <div>
@@ -485,11 +539,24 @@ const MyPage = () => {
               {userData.posts.map((post) => (
                 <Card
                   key={post.id}
-                  className="cursor-pointer hover:shadow-md transition-shadow"
-                  onClick={() => navigate(`/board/${post.id}`)}
+                  className={isEditMode ? "" : "cursor-pointer hover:shadow-md transition-shadow"}
+                  onClick={() => !isEditMode && navigate(`/board/${post.id}`)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
+                      {isEditMode && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeletePost(post.id);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                       <Badge variant="secondary" className="text-xs flex-shrink-0">
                         {post.board}
                       </Badge>
