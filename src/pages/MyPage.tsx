@@ -306,29 +306,20 @@ const MyPage = () => {
             <CardContent className="p-4">
               <div className="flex gap-4">
                 <div className="relative">
-                  <Avatar className="h-20 w-20 flex-shrink-0">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleAvatarChange}
+                  />
+                  <Avatar 
+                    className={`h-20 w-20 flex-shrink-0 ${isEditMode ? 'cursor-pointer ring-2 ring-primary ring-offset-2' : ''}`}
+                    onClick={() => isEditMode && fileInputRef.current?.click()}
+                  >
                     <AvatarImage src={userData.avatar} />
                     <AvatarFallback>{userData.nickname.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  {isEditMode && (
-                    <>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleAvatarChange}
-                      />
-                      <Button
-                        size="icon"
-                        variant="secondary"
-                        className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full"
-                        onClick={() => fileInputRef.current?.click()}
-                      >
-                        <Upload className="h-3 w-3" />
-                      </Button>
-                    </>
-                  )}
                 </div>
 
                 <div className="flex-1 space-y-2">
