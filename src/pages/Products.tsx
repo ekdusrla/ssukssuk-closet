@@ -58,7 +58,16 @@ const MOCK_PRODUCTS = [
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  const toggleKeyword = (keyword: string) => {
+    setSelectedKeywords((prev) =>
+      prev.includes(keyword)
+        ? prev.filter((k) => k !== keyword)
+        : [...prev, keyword]
+    );
+  };
 
   // Group products by keywords
   const getProductsByKeyword = (keyword: string) => {
@@ -70,7 +79,8 @@ const Products = () => {
   };
 
   // Get keywords that have products
-  const activeKeywords = HASHTAGS.filter((keyword) => 
+  const displayKeywords = selectedKeywords.length > 0 ? selectedKeywords : HASHTAGS;
+  const activeKeywords = displayKeywords.filter((keyword) => 
     getProductsByKeyword(keyword).length > 0
   );
 
@@ -114,6 +124,35 @@ const Products = () => {
                       className="mt-2"
                     >
                       선택 해제
+                    </Button>
+                  )}
+                </div>
+
+                {/* Keyword Selection */}
+                <div>
+                  <h3 className="font-semibold mb-3">키워드 선택</h3>
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {HASHTAGS.map((tag) => (
+                      <div key={tag} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={tag}
+                          checked={selectedKeywords.includes(tag)}
+                          onCheckedChange={() => toggleKeyword(tag)}
+                        />
+                        <Label htmlFor={tag} className="cursor-pointer">
+                          #{tag}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                  {selectedKeywords.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedKeywords([])}
+                      className="mt-2"
+                    >
+                      전체 해제
                     </Button>
                   )}
                 </div>
