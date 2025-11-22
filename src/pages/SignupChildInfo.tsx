@@ -5,14 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -21,12 +14,13 @@ const childInfoSchema = z.object({
   gender: z.enum(["male", "female"], {
     required_error: "성별을 선택해주세요",
   }),
-  birthdate: z.string()
-    .min(1, { message: "생년월일을 입력해주세요" }),
-  height: z.string()
+  birthdate: z.string().min(1, { message: "생년월일을 입력해주세요" }),
+  height: z
+    .string()
     .min(1, { message: "키를 입력해주세요" })
     .regex(/^\d+(\.\d+)?$/, { message: "숫자만 입력해주세요" }),
-  weight: z.string()
+  weight: z
+    .string()
     .min(1, { message: "몸무게를 입력해주세요" })
     .regex(/^\d+(\.\d+)?$/, { message: "숫자만 입력해주세요" }),
 });
@@ -34,10 +28,26 @@ const childInfoSchema = z.object({
 type ChildInfoFormValues = z.infer<typeof childInfoSchema>;
 
 const HASHTAGS = [
-  "활발함", "차분함", "호기심많음", "창의적", "사교적",
-  "내성적", "운동좋아함", "독서좋아함", "음악좋아함", "미술좋아함",
-  "게임좋아함", "동물좋아함", "요리좋아함", "춤추기좋아함", "노래부르기좋아함",
-  "과학실험좋아함", "레고놀이좋아함", "야외활동좋아함", "실내활동좋아함", "친구많음"
+  "활발함",
+  "차분함",
+  "호기심많음",
+  "창의적",
+  "사교적",
+  "내성적",
+  "운동좋아함",
+  "독서좋아함",
+  "음악좋아함",
+  "미술좋아함",
+  "게임좋아함",
+  "동물좋아함",
+  "요리좋아함",
+  "춤추기좋아함",
+  "노래부르기좋아함",
+  "과학실험좋아함",
+  "레고놀이좋아함",
+  "야외활동좋아함",
+  "실내활동좋아함",
+  "친구많음",
 ];
 
 const SignupChildInfo = () => {
@@ -64,9 +74,9 @@ const SignupChildInfo = () => {
   });
 
   const toggleTag = (tag: string) => {
-    setSelectedTags(prev => {
+    setSelectedTags((prev) => {
       if (prev.includes(tag)) {
-        return prev.filter(t => t !== tag);
+        return prev.filter((t) => t !== tag);
       } else if (prev.length < 5) {
         return [...prev, tag];
       } else {
@@ -83,10 +93,10 @@ const SignupChildInfo = () => {
     }
 
     try {
-      const response = await fetch('/sign/up', {
-        method: 'POST',
+      const response = await fetch("http://3.35.8.64/sign/up", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
           nickname,
@@ -122,10 +132,8 @@ const SignupChildInfo = () => {
       <div className="flex-1 flex items-start justify-center px-6 pt-20">
         <div className="w-full max-w-sm">
           <h1 className="text-2xl font-bold text-center mb-2">아이 정보 입력</h1>
-          <p className="text-sm text-muted-foreground text-center mb-8">
-            자녀의 정보를 입력해주세요
-          </p>
-          
+          <p className="text-sm text-muted-foreground text-center mb-8">자녀의 정보를 입력해주세요</p>
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -164,10 +172,7 @@ const SignupChildInfo = () => {
                   <FormItem>
                     <FormLabel>생년월일</FormLabel>
                     <FormControl>
-                      <Input
-                        type="date"
-                        {...field}
-                      />
+                      <Input type="date" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -182,10 +187,7 @@ const SignupChildInfo = () => {
                     <FormItem>
                       <FormLabel>키 (cm)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="예: 120"
-                          {...field}
-                        />
+                        <Input placeholder="예: 120" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -199,10 +201,7 @@ const SignupChildInfo = () => {
                     <FormItem>
                       <FormLabel>몸무게 (kg)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="예: 25"
-                          {...field}
-                        />
+                        <Input placeholder="예: 25" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -224,16 +223,10 @@ const SignupChildInfo = () => {
                     </Badge>
                   ))}
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  선택된 해시태그: {selectedTags.length}/5
-                </p>
+                <p className="text-sm text-muted-foreground">선택된 해시태그: {selectedTags.length}/5</p>
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full"
-                disabled={!isFormValid}
-              >
+              <Button type="submit" className="w-full" disabled={!isFormValid}>
                 가입하기
               </Button>
             </form>

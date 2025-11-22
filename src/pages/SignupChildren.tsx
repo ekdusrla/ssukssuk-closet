@@ -24,16 +24,16 @@ const SignupChildren = () => {
         city,
         district,
         bio,
-      }
+      },
     });
   };
 
   const handleNo = async () => {
     try {
-      const response = await fetch('/sign/up', {
-        method: 'POST',
+      const response = await fetch("http://3.35.8.64/sign/up", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
           nickname,
@@ -67,19 +67,12 @@ const SignupChildren = () => {
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         <div className="w-full max-w-sm text-center">
           <h1 className="text-3xl font-bold mb-12">자녀가 있나요?</h1>
-          
+
           <div className="space-y-4">
-            <Button 
-              onClick={handleYes}
-              className="w-full h-14 text-lg"
-            >
+            <Button onClick={handleYes} className="w-full h-14 text-lg">
               예
             </Button>
-            <Button 
-              onClick={handleNo}
-              variant="outline"
-              className="w-full h-14 text-lg"
-            >
+            <Button onClick={handleNo} variant="outline" className="w-full h-14 text-lg">
               아니오
             </Button>
           </div>
