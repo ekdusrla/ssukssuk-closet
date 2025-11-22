@@ -45,30 +45,14 @@ const Signup = () => {
     },
   });
 
-  const onSubmit = async (data: SignupFormValues) => {
-    try {
-      const response = await fetch('/sign/up', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          nickname: data.nickname,
-          pw: data.pw,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.code === 200) {
-        toast.success("회원가입이 완료되었습니다!");
-        navigate("/login");
-      } else {
-        toast.error("회원가입에 실패했습니다");
+  const onSubmit = (data: SignupFormValues) => {
+    // 다음 단계로 이동하면서 입력한 정보 전달
+    navigate("/signup/additional", {
+      state: {
+        nickname: data.nickname,
+        pw: data.pw,
       }
-    } catch (error) {
-      toast.error("회원가입 중 오류가 발생했습니다");
-    }
+    });
   };
 
   return (
@@ -140,7 +124,7 @@ const Signup = () => {
               />
 
               <Button type="submit" className="w-full">
-                가입하기
+                다음 단계
               </Button>
             </form>
           </Form>
