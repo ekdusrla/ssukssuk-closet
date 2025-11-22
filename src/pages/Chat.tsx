@@ -1,51 +1,84 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import ChatListItem from "@/components/chat/ChatListItem";
 import TopNav from "@/components/layout/TopNav";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
-// 임시 데이터
-const mockChats = [
-  {
-    id: "1",
-    name: "민지엄마",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=1",
-    lastMessage: "네 좋아요! 내일 2시에 만나요~",
-    unreadCount: 2,
-    timestamp: "오후 3:24",
-  },
-  {
-    id: "2",
-    name: "서준이네",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=2",
-    lastMessage: "사진 보내드릴게요",
-    unreadCount: 0,
-    timestamp: "오전 11:15",
-  },
-  {
-    id: "3",
-    name: "하윤맘",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=3",
-    lastMessage: "아이 옷 너무 예뻐요 ㅎㅎ",
-    unreadCount: 1,
-    timestamp: "어제",
-  },
-  {
-    id: "4",
-    name: "지우아빠",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=4",
-    lastMessage: "감사합니다!",
-    unreadCount: 0,
-    timestamp: "일요일",
-  },
-];
+interface ChatRoom {
+  with: string;
+  last_message: {
+    who: string;
+    when: string;
+    content: string;
+  };
+}
+
+interface ChatListData {
+  id: string;
+  name: string;
+  avatar: string;
+  lastMessage: string;
+  unreadCount: number;
+  timestamp: string;
+}
 
 const Chat = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [chats, setChats] = useState<ChatListData[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { nickname, isAuthenticated } = useAuth();
 
-  const filteredChats = mockChats.filter((chat) =>
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    const fetchChatRooms = async () => {
+      try {
+        const response = await fetch('http://3.35.8.64/chat/chat/rooms', {
+          credentials: 'include',
+        });
+
+        const result = await response.json();
+
+        if (result.code === 200 && result.data) {
+          const chatListData: ChatListData[] = result.data.map((room: ChatRoom, index: number) => ({
+            id: room.with,
+            name: room.with,
+            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${room.with}`,
+            lastMessage: room.last_message.content,
+            unreadCount: 0,
+            timestamp: formatTimestamp(room.last_message.when),
+          }));
+          setChats(chatListData);
+        }
+      } catch (error) {
+        console.error('채팅방 목록 로딩 실패:', error);
+        toast.error('채팅방 목록을 불러오지 못했습니다');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChatRooms();
+  }, [isAuthenticated, navigate]);
+
+  const formatTimestamp = (when: string) => {
+    // "2025-11-22/16:03" 형식을 "오후 4:03" 형식으로 변환
+    const [date, time] = when.split('/');
+    const [hour, minute] = time.split(':');
+    const hourNum = parseInt(hour);
+    const period = hourNum >= 12 ? '오후' : '오전';
+    const displayHour = hourNum > 12 ? hourNum - 12 : hourNum;
+    return `${period} ${displayHour}:${minute}`;
+  };
+
+  const filteredChats = chats.filter((chat) =>
     chat.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -69,7 +102,11 @@ const Chat = () => {
 
       {/* 채팅 목록 */}
       <div className="max-w-lg mx-auto">
-        {filteredChats.length > 0 ? (
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+            <p>로딩 중...</p>
+          </div>
+        ) : filteredChats.length > 0 ? (
           filteredChats.map((chat) => (
             <ChatListItem
               key={chat.id}
@@ -79,7 +116,7 @@ const Chat = () => {
           ))
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-            <p>검색 결과가 없습니다</p>
+            <p>{searchQuery ? '검색 결과가 없습니다' : '채팅방이 없습니다'}</p>
           </div>
         )}
       </div>
