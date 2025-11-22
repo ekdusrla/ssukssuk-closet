@@ -50,7 +50,7 @@ const BoardPost = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pt-16 pb-24">
+    <div className="min-h-screen bg-background pt-16 pb-20">
       <TopNav />
       
       {/* 헤더 */}
@@ -75,16 +75,21 @@ const BoardPost = () => {
 
       {/* 본문 */}
       <div className="max-w-lg mx-auto px-6 py-6">
-        <p className="text-foreground leading-relaxed mb-8">{post.content}</p>
+        <p className="text-foreground leading-relaxed mb-6">{post.content}</p>
+
+        {/* 구분선 */}
+        <div className="border-t my-6" />
 
         {/* 댓글 섹션 */}
         <div>
           <h2 className="text-lg font-semibold mb-4">
             댓글 {comments.length}
           </h2>
-          <div className="space-y-4">
+          <div className="divide-y">
             {comments.map((commentItem) => (
-              <CommentItem key={commentItem.id} comment={commentItem} />
+              <div key={commentItem.id} className="py-3 first:pt-0">
+                <CommentItem comment={commentItem} />
+              </div>
             ))}
           </div>
         </div>
@@ -92,21 +97,21 @@ const BoardPost = () => {
 
       {/* 댓글 입력 영역 (하단 고정) */}
       <div className="fixed bottom-0 left-0 right-0 bg-background border-t">
-        <div className="max-w-lg mx-auto px-6 py-4">
+        <div className="max-w-lg mx-auto px-6 py-3">
           <div className="flex gap-2 items-end">
             <Textarea
               placeholder="댓글을 입력하세요"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="flex-1 min-h-[60px] max-h-[120px] resize-none"
+              className="flex-1 min-h-[44px] max-h-[100px] resize-none"
             />
             <Button
               onClick={handleCommentSubmit}
               size="icon"
-              className="h-[60px] w-[60px] flex-shrink-0"
+              className="h-[44px] w-[44px] flex-shrink-0"
               disabled={!comment.trim()}
             >
-              <Send size={20} />
+              <Send size={18} />
             </Button>
           </div>
         </div>
