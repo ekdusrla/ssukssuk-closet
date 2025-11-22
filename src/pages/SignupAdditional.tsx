@@ -17,19 +17,18 @@ import { toast } from "sonner";
 import { useEffect } from "react";
 
 const additionalInfoSchema = z.object({
-  name: z.string()
+  city: z.string()
     .trim()
-    .min(1, { message: "이름을 입력해주세요" })
-    .max(50, { message: "이름은 50자 이내로 입력해주세요" }),
-  email: z.string()
+    .min(1, { message: "시를 입력해주세요" })
+    .max(50, { message: "시는 50자 이내로 입력해주세요" }),
+  district: z.string()
     .trim()
-    .email({ message: "올바른 이메일 주소를 입력해주세요" })
-    .max(100, { message: "이메일은 100자 이내로 입력해주세요" }),
-  phone: z.string()
+    .min(1, { message: "구를 입력해주세요" })
+    .max(50, { message: "구는 50자 이내로 입력해주세요" }),
+  bio: z.string()
     .trim()
-    .min(1, { message: "전화번호를 입력해주세요" })
-    .regex(/^[0-9-]+$/, { message: "올바른 전화번호 형식을 입력해주세요" })
-    .max(20, { message: "전화번호는 20자 이내로 입력해주세요" }),
+    .min(1, { message: "자기소개를 입력해주세요" })
+    .max(200, { message: "자기소개는 200자 이내로 입력해주세요" }),
 });
 
 type AdditionalInfoFormValues = z.infer<typeof additionalInfoSchema>;
@@ -50,41 +49,23 @@ const SignupAdditional = () => {
   const form = useForm<AdditionalInfoFormValues>({
     resolver: zodResolver(additionalInfoSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
+      city: "",
+      district: "",
+      bio: "",
     },
   });
 
-  const onSubmit = async (data: AdditionalInfoFormValues) => {
-    try {
-      // 실제 회원가입 API 호출
-      const response = await fetch('/sign/up', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          nickname: nickname,
-          pw: pw,
-          // 추가 정보는 필요시 API에 전달
-          // name: data.name,
-          // email: data.email,
-          // phone: data.phone,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.code === 200) {
-        toast.success("회원가입이 완료되었습니다!");
-        navigate("/login");
-      } else {
-        toast.error("회원가입에 실패했습니다");
+  const onSubmit = (data: AdditionalInfoFormValues) => {
+    // 다음 단계로 이동하면서 모든 정보 전달
+    navigate("/signup/children", {
+      state: {
+        nickname,
+        pw,
+        city: data.city,
+        district: data.district,
+        bio: data.bio,
       }
-    } catch (error) {
-      toast.error("회원가입 중 오류가 발생했습니다");
-    }
+    });
   };
 
   return (
@@ -106,50 +87,51 @@ const SignupAdditional = () => {
           
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>이름</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="이름을 입력하세요"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>시</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="예: 서울특별시"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="district"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>구</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="예: 강남구"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
-                name="email"
+                name="bio"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>이메일</FormLabel>
+                    <FormLabel>짧은 자기소개</FormLabel>
                     <FormControl>
                       <Input
-                        type="email"
-                        placeholder="example@email.com"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>전화번호</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="010-0000-0000"
+                        placeholder="자기소개를 입력하세요"
                         {...field}
                       />
                     </FormControl>
@@ -159,7 +141,7 @@ const SignupAdditional = () => {
               />
 
               <Button type="submit" className="w-full">
-                가입하기
+                다음 단계
               </Button>
             </form>
           </Form>
