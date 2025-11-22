@@ -5,18 +5,27 @@ import { useState } from "react";
 import CommentItem from "@/components/board/CommentItem";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // 임시 데이터
 const postData: { [key: string]: any } = {
   "1": {
     title: "100 사이즈 겨울 옷 나눔합니다",
     content: "아이가 빨리 커서 거의 새 옷인데 못 입게 되었어요. 필요하신 분께 나눔하고 싶습니다. 댓글 남겨주세요!",
+    author: {
+      name: "김엄마",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=1",
+    },
     likeCount: 24,
     isLiked: false,
   },
   "2": {
     title: "아이 옷 사이즈 교환 가능하신 분?",
     content: "90 사이즈를 100 사이즈로 교환하고 싶어요. 거의 새 것이고 브랜드 옷입니다.",
+    author: {
+      name: "박아빠",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=2",
+    },
     likeCount: 15,
     isLiked: false,
   },
@@ -76,7 +85,19 @@ const BoardPost = () => {
       {/* 본문 */}
       <div className="max-w-lg mx-auto px-6 py-6">
         <div className="p-4 bg-card rounded-lg mb-6">
-          <p className="text-foreground leading-relaxed">{post.content}</p>
+          <p className="text-foreground leading-relaxed mb-4">{post.content}</p>
+          
+          {/* 구분선 */}
+          <div className="border-t my-4" />
+          
+          {/* 작성자 정보 */}
+          <div className="flex items-center gap-3">
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={post.author.avatar} alt={post.author.name} />
+              <AvatarFallback>{post.author.name[0]}</AvatarFallback>
+            </Avatar>
+            <span className="font-semibold text-sm">{post.author.name}</span>
+          </div>
         </div>
 
         {/* 댓글 섹션 */}
