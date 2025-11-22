@@ -85,7 +85,16 @@ const BoardDetail = () => {
         ) : (
           <div className="space-y-2">
             {posts.map((post) => (
-              <PostListItem key={post.id} post={post} boardId={id || "1"} />
+              <PostListItem 
+                key={post.id} 
+                post={{
+                  id: post.id.toString(),
+                  title: post.title || "",
+                  likeCount: post.liked,
+                  commentCount: post.comments
+                }} 
+                boardId={id || "1"} 
+              />
             ))}
           </div>
         )}
