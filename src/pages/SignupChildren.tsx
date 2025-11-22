@@ -30,7 +30,7 @@ const SignupChildren = () => {
 
   const handleNo = async () => {
     try {
-      const response = await fetch("http://3.35.8.64/board/up", {
+      const response = await fetch("http://3.35.8.64/sign/up", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

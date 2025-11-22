@@ -38,7 +38,7 @@ const Login = () => {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const response = await fetch("http://3.35.8.64/board/in", {
+      const response = await fetch("http://3.35.8.64/sign/in", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
