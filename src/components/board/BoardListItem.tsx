@@ -8,13 +8,19 @@ interface BoardListItemProps {
     memberCount: number;
     isFavorite: boolean;
   };
+  onToggleFavorite: (boardId: string) => void;
 }
 
-const BoardListItem = ({ board }: BoardListItemProps) => {
+const BoardListItem = ({ board, onToggleFavorite }: BoardListItemProps) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(`/board/${board.id}`);
+  };
+
+  const handleStarClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleFavorite(board.id);
   };
 
   return (
@@ -31,7 +37,8 @@ const BoardListItem = ({ board }: BoardListItemProps) => {
       </div>
       <Star
         size={20}
-        className={board.isFavorite ? "text-primary fill-primary" : "text-muted-foreground"}
+        onClick={handleStarClick}
+        className={board.isFavorite ? "text-primary fill-primary cursor-pointer" : "text-muted-foreground cursor-pointer hover:text-primary"}
       />
     </div>
   );
