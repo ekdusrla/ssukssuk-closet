@@ -1,23 +1,22 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Edit, Plus, X, Upload, Trash2 } from "lucide-react";
+import { ArrowLeft, Edit, Plus } from "lucide-react";
 import TopNav from "@/components/layout/TopNav";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-
-const HASHTAGS = [
-  "활동적인", "조용한", "사교적인", "신중한", "호기심많은",
-  "편안한", "예민한", "긍정적인", "창의적인", "논리적인",
-  "감성적인", "독립적인", "협동적인", "리더십", "배려심많은",
-  "꼼꼼한", "자유로운", "계획적인", "즉흥적인", "차분한"
-];
 
 type ProductType = {
   title: string;
@@ -41,14 +40,11 @@ const MyPage = () => {
   const navigate = useNavigate();
   const [isEditMode, setIsEditMode] = useState(false);
   const [userData, setUserData] = useState<SellerType | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Dialog states
   const [addProductDialog, setAddProductDialog] = useState(false);
   const [editProductDialog, setEditProductDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null);
 
-  // Product form
   const [productForm, setProductForm] = useState({
     title: "",
     price: "",
@@ -58,19 +54,23 @@ const MyPage = () => {
     size: 0,
   });
 
-  // 초기 데이터 fetch
+  // 로그인한 유저 정보 가져오기
   useEffect(() => {
-    const fetchUser = async () => {
-      const res = await fetch("http://localhost:8080/user/get_sellers");
-      const data = await res.json();
-      // 예시로 첫 번째 사용자 로드
-      setUserData(data.data[0]);
+    const loadUser = async () => {
+      const res = await fetch("http://localhost:8080/user/me", {
+        credentials: "include",
+      });
+      const result = await res.json();
+      if (result.code === 200) {
+        setUserData(result.data);
+      }
     };
-    fetchUser();
+    loadUser();
   }, []);
 
+  // 상품 수정
   const handleProductUpdateAPI = async () => {
-    if (!selectedProduct) return;
+    if (!selectedProduct || !userData) return;
 
     const body = {
       title: productForm.title,
@@ -79,7 +79,7 @@ const MyPage = () => {
       size: productForm.size,
       content: productForm.description,
       tags: productForm.tags,
-      idx: userData!.products.findIndex((p) => p.title === selectedProduct.title),
+      idx: userData.products.findIndex((p) => p.title === selectedProduct.title),
     };
 
     await fetch("http://localhost:8080/user/update_clothes", {
@@ -89,15 +89,17 @@ const MyPage = () => {
       credentials: "include",
     });
 
-    // 로컬 업데이트
-    const updatedProducts = userData!.products.map((p) =>
-      p.title === selectedProduct.title ? { ...body } : p
+    const updatedProducts = userData.products.map((p) =>
+      p.title === selectedProduct.title ? body : p
     );
-    setUserData({ ...userData!, products: updatedProducts });
+    setUserData({ ...userData, products: updatedProducts });
     setEditProductDialog(false);
   };
 
+  // 상품 추가
   const handleAddProductAPI = async () => {
+    if (!userData) return;
+
     const body = {
       title: productForm.title,
       picture: productForm.image,
@@ -116,8 +118,8 @@ const MyPage = () => {
     });
 
     setUserData({
-      ...userData!,
-      products: [...userData!.products, body],
+      ...userData,
+      products: [...userData.products, body],
     });
     setAddProductDialog(false);
   };
@@ -151,11 +153,7 @@ const MyPage = () => {
         {/* User Info */}
         <Card>
           <CardContent className="flex gap-4 items-center">
-            <Avatar
-              src={userData.avatar}
-              className={`h-20 w-20 ${isEditMode ? "cursor-pointer ring-2 ring-primary" : ""}`}
-              onClick={() => isEditMode && fileInputRef.current?.click()}
-            />
+            <Avatar src={userData.avatar} className="h-20 w-20" />
             <div className="flex-1 space-y-1">
               <h2 className="font-semibold text-lg">{userData.nickname}</h2>
               <p className="text-xs text-muted-foreground">{userData.bio}</p>
@@ -184,18 +182,21 @@ const MyPage = () => {
               </Button>
             )}
           </div>
+
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
             {userData.products.map((product) => (
               <Card
                 key={product.title}
                 className="flex-shrink-0 w-36 cursor-pointer"
                 onClick={() =>
-                  isEditMode ? openEditProductDialog(product) : navigate(`/products/${product.title}`)
+                  isEditMode
+                    ? openEditProductDialog(product)
+                    : navigate(`/products/${product.title}`)
                 }
               >
                 <CardContent className="p-0">
                   <AspectRatio ratio={1}>
-                    <img src={product.picture || "/placeholder.svg"} className="w-full h-full object-cover" />
+                    <img src={product.picture} className="w-full h-full object-cover" />
                   </AspectRatio>
                 </CardContent>
                 <div className="p-2">
@@ -206,43 +207,77 @@ const MyPage = () => {
           </div>
         </div>
 
-        {/* Edit Product Dialog */}
+        {/* 상품 수정 다이얼로그 */}
         <Dialog open={editProductDialog} onOpenChange={setEditProductDialog}>
-          <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>상품 수정</DialogTitle>
             </DialogHeader>
+
             <div className="space-y-4">
               <Label>제목</Label>
-              <Input value={productForm.title} onChange={(e) => setProductForm({ ...productForm, title: e.target.value })} />
+              <Input
+                value={productForm.title}
+                onChange={(e) => setProductForm({ ...productForm, title: e.target.value })}
+              />
+
               <Label>가격</Label>
-              <Input value={productForm.price} onChange={(e) => setProductForm({ ...productForm, price: e.target.value })} />
+              <Input
+                value={productForm.price}
+                onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
+              />
+
               <Label>설명</Label>
-              <Textarea value={productForm.description} onChange={(e) => setProductForm({ ...productForm, description: e.target.value })} />
+              <Textarea
+                value={productForm.description}
+                onChange={(e) =>
+                  setProductForm({ ...productForm, description: e.target.value })
+                }
+              />
             </div>
-            <DialogFooter className="flex gap-2">
-              <Button variant="outline" onClick={() => setEditProductDialog(false)}>취소</Button>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setEditProductDialog(false)}>
+                취소
+              </Button>
               <Button onClick={handleProductUpdateAPI}>수정 완료</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
-        {/* Add Product Dialog */}
+        {/* 상품 추가 다이얼로그 */}
         <Dialog open={addProductDialog} onOpenChange={setAddProductDialog}>
-          <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>상품 추가</DialogTitle>
             </DialogHeader>
+
             <div className="space-y-4">
               <Label>제목</Label>
-              <Input value={productForm.title} onChange={(e) => setProductForm({ ...productForm, title: e.target.value })} />
+              <Input
+                value={productForm.title}
+                onChange={(e) => setProductForm({ ...productForm, title: e.target.value })}
+              />
+
               <Label>가격</Label>
-              <Input value={productForm.price} onChange={(e) => setProductForm({ ...productForm, price: e.target.value })} />
+              <Input
+                value={productForm.price}
+                onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
+              />
+
               <Label>설명</Label>
-              <Textarea value={productForm.description} onChange={(e) => setProductForm({ ...productForm, description: e.target.value })} />
+              <Textarea
+                value={productForm.description}
+                onChange={(e) =>
+                  setProductForm({ ...productForm, description: e.target.value })
+                }
+              />
             </div>
+
             <DialogFooter>
-              <Button variant="outline" onClick={() => setAddProductDialog(false)}>취소</Button>
+              <Button variant="outline" onClick={() => setAddProductDialog(false)}>
+                취소
+              </Button>
               <Button onClick={handleAddProductAPI}>상품 올리기</Button>
             </DialogFooter>
           </DialogContent>
