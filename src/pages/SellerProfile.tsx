@@ -1,54 +1,71 @@
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, MessageCircle } from "lucide-react";
 import TopNav from "@/components/layout/TopNav";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { ArrowLeft, MessageCircle } from "lucide-react";
 
-// Mock data
-const MOCK_SELLER = {
-  id: "seller1",
-  nickname: "엄마손",
-  avatar: "/placeholder.svg",
-  location: "서울시 강남구",
-  bio: "두 아이를 키우는 엄마입니다. 우리 아이들이 입던 깨끗한 옷들을 합리적인 가격에 나눔합니다 😊",
-  tags: ["활동적인", "사교적인", "편안한"],
-  children: [
-    {
-      id: 1,
-      gender: "남",
-      birthdate: "2020-05-15",
-      height: 110,
-      weight: 18,
-      tags: ["활동적인", "호기심많은", "사교적인"],
-    },
-    {
-      id: 2,
-      gender: "여",
-      birthdate: "2022-08-20",
-      height: 95,
-      weight: 14,
-      tags: ["조용한", "신중한", "예민한"],
-    },
-  ],
-  products: [
-    { id: 1, title: "귀여운 후드 티셔츠", image: "/placeholder.svg" },
-    { id: 2, title: "편안한 트레이닝 바지", image: "/placeholder.svg" },
-    { id: 3, title: "따뜻한 패딩 점퍼", image: "/placeholder.svg" },
-    { id: 4, title: "귀여운 원피스", image: "/placeholder.svg" },
-  ],
-};
+// TypeScript 인터페이스
+interface Child {
+  id: number;
+  gender: string;
+  birthdate: string;
+  height: number;
+  weight: number;
+  tags: string[];
+}
+
+interface Product {
+  id: number;
+  title: string;
+  image: string;
+}
+
+interface Seller {
+  id: string;
+  nickname: string;
+  avatar: string;
+  location?: string;
+  bio?: string;
+  childrenTags: string[];
+  children: Child[];
+  products: Product[];
+}
 
 const SellerProfile = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [seller, setSeller] = useState<Seller | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Combine all children's tags
-  const allChildrenTags = Array.from(
-    new Set(MOCK_SELLER.children.flatMap((child) => child.tags))
-  );
+  useEffect(() => {
+    const fetchSeller = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch("http://localhost:8080/user/get_sellers");
+        const json = await res.json();
+        if (json.code === 200) {
+          // id에 맞는 판매자 선택
+          const foundSeller = json.data.find((s: any) => s.id === id);
+          if (foundSeller) {
+            // children이 없는 경우 초기화
+            foundSeller.children = foundSeller.children || [];
+            setSeller(foundSeller);
+          } else {
+            setSeller(null);
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSeller();
+  }, [id]);
 
   const handleChatClick = () => {
     navigate(`/chat/${id}`);
@@ -61,9 +78,14 @@ const SellerProfile = () => {
   const calculateAge = (birthdate: string) => {
     const today = new Date();
     const birth = new Date(birthdate);
-    const age = today.getFullYear() - birth.getFullYear();
-    return age;
+    return today.getFullYear() - birth.getFullYear();
   };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center">로딩 중...</div>;
+  if (!seller) return <div className="min-h-screen flex items-center justify-center">판매자를 찾을 수 없습니다.</div>;
+
+  // children tags 합치기
+  const allChildrenTags = Array.from(new Set(seller.children.flatMap(child => child.tags)));
 
   return (
     <div className="min-h-screen bg-background pt-16 pb-20">
@@ -83,17 +105,17 @@ const SellerProfile = () => {
             <CardContent className="p-4">
               <div className="flex gap-4">
                 <Avatar className="h-20 w-20 flex-shrink-0">
-                  <AvatarImage src={MOCK_SELLER.avatar} />
-                  <AvatarFallback>{MOCK_SELLER.nickname.charAt(0)}</AvatarFallback>
+                  <AvatarImage src={seller.avatar || "/placeholder.svg"} />
+                  <AvatarFallback>{seller.nickname.charAt(0)}</AvatarFallback>
                 </Avatar>
 
                 <div className="flex-1 space-y-2">
                   <div>
-                    <h2 className="font-semibold text-lg">{MOCK_SELLER.nickname}</h2>
-                    <p className="text-xs text-muted-foreground mt-0.5">{MOCK_SELLER.location}</p>
+                    <h2 className="font-semibold text-lg">{seller.nickname}</h2>
+                    {seller.location && <p className="text-xs text-muted-foreground mt-0.5">{seller.location}</p>}
                   </div>
                   <div className="flex flex-wrap gap-1.5">
-                    {allChildrenTags.map((tag) => (
+                    {allChildrenTags.map(tag => (
                       <Badge key={tag} variant="secondary" className="text-xs">
                         #{tag}
                       </Badge>
@@ -110,12 +132,12 @@ const SellerProfile = () => {
           </Card>
 
           {/* Bio Section */}
-          {MOCK_SELLER.bio && (
+          {seller.bio && (
             <Card>
               <CardContent className="p-4">
                 <h3 className="font-semibold mb-2">소개</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  {MOCK_SELLER.bio}
+                  {seller.bio}
                 </p>
               </CardContent>
             </Card>
@@ -125,7 +147,7 @@ const SellerProfile = () => {
           <div>
             <h3 className="font-semibold mb-3">아이 정보</h3>
             <div className="space-y-3">
-              {MOCK_SELLER.children.map((child) => (
+              {seller.children.map(child => (
                 <Card key={child.id}>
                   <CardContent className="p-4">
                     <div className="space-y-2">
@@ -138,7 +160,7 @@ const SellerProfile = () => {
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-1.5">
-                        {child.tags.map((tag) => (
+                        {child.tags.map(tag => (
                           <Badge key={tag} variant="outline" className="text-xs">
                             #{tag}
                           </Badge>
@@ -155,7 +177,7 @@ const SellerProfile = () => {
           <div>
             <h3 className="font-semibold mb-3">판매 상품</h3>
             <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'thin' }}>
-              {MOCK_SELLER.products.map((product) => (
+              {seller.products.map(product => (
                 <Card
                   key={product.id}
                   className="flex-shrink-0 w-36 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
@@ -164,7 +186,7 @@ const SellerProfile = () => {
                   <CardContent className="p-0">
                     <AspectRatio ratio={1}>
                       <img
-                        src={product.image}
+                        src={product.image || "/placeholder.svg"}
                         alt={product.title}
                         className="w-full h-full object-cover"
                       />
