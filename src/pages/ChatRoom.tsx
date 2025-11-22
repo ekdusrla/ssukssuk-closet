@@ -62,6 +62,7 @@ const ChatRoom = () => {
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 채팅 목록에서 전달받은 데이터 또는 기본값
   const chatData = location.state?.chat || {
@@ -113,7 +114,20 @@ const ChatRoom = () => {
   };
 
   const handleAttachFile = () => {
-    toast.info("사진 첨부 기능은 준비 중입니다");
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.type.startsWith('image/')) {
+        // 여기서 이미지를 처리할 수 있습니다
+        toast.success("사진이 첨부되었습니다");
+        // TODO: 실제 이미지 업로드 및 메시지 전송 로직 구현
+      } else {
+        toast.error("이미지 파일만 첨부 가능합니다");
+      }
+    }
   };
 
   return (
@@ -138,6 +152,13 @@ const ChatRoom = () => {
       {/* 메시지 입력 영역 */}
       <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-end gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+          />
           <Button
             onClick={handleAttachFile}
             variant="ghost"

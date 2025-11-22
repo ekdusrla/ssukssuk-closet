@@ -67,10 +67,10 @@ const SignupChildInfo = () => {
     setSelectedTags(prev => {
       if (prev.includes(tag)) {
         return prev.filter(t => t !== tag);
-      } else if (prev.length < 3) {
+      } else if (prev.length < 5) {
         return [...prev, tag];
       } else {
-        toast.error("최대 3개까지 선택 가능합니다");
+        toast.error("최대 5개까지 선택 가능합니다");
         return prev;
       }
     });
@@ -211,7 +211,7 @@ const SignupChildInfo = () => {
               </div>
 
               <div className="space-y-3">
-                <FormLabel>해시태그 선택 (최소 1개, 최대 3개)</FormLabel>
+                <FormLabel>해시태그 선택 (최소 1개, 최대 5개)</FormLabel>
                 <div className="flex flex-wrap gap-2">
                   {HASHTAGS.map((tag) => (
                     <Badge
@@ -225,7 +225,7 @@ const SignupChildInfo = () => {
                   ))}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  선택된 해시태그: {selectedTags.length}/3
+                  선택된 해시태그: {selectedTags.length}/5
                 </p>
               </div>
 
