@@ -94,51 +94,52 @@ const ChatRoom = () => {
     return `${period} ${displayHour}:${minute}`;
   };
 
-  const handleSendMessage = async () => {
-    if (newMessage.trim() && id) {
-      const messageText = newMessage.trim();
-      
-      try {
-        const response = await fetch(`http://localhost:8080/chat/send?other_user=${encodeURIComponent(id)}&content=${encodeURIComponent(messageText)}`, {
-          method: 'POST',
-          credentials: 'include',
-        });
+const handleSendMessage = async () => {
+  const trimmedMessage = newMessage.trim();
+  if (!trimmedMessage || !id) return;
 
-        const result = await response.json();
+  try {
+    const response = await fetch(`http://localhost:8080/chat/send`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        other_user: id,
+        content: trimmedMessage
+      })
+    });
 
-        if (result.code === 200 || result.code === 201) {
-          // 메시지를 로컬 상태에 추가
-          const now = new Date();
-          const hour = now.getHours();
-          const minute = now.getMinutes().toString().padStart(2, "0");
-          const period = hour >= 12 ? '오후' : '오전';
-          const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-          const timestamp = `${period} ${displayHour}:${minute}`;
+    const result = await response.json();
 
-          setMessages([
-            ...messages,
-            {
-              id: Date.now().toString(),
-              text: messageText,
-              isMine: true,
-              timestamp,
-            },
-          ]);
-          setNewMessage("");
-          
-          // 텍스트 영역 높이 초기화
-          if (textareaRef.current) {
-            textareaRef.current.style.height = "auto";
-          }
-        } else {
-          toast.error('메시지 전송에 실패했습니다');
-        }
-      } catch (error) {
-        console.error('메시지 전송 실패:', error);
-        toast.error('메시지 전송 중 오류가 발생했습니다');
-      }
+    if (result.code === 200) {
+      // 메시지를 로컬 상태에 추가
+      const now = new Date();
+      const hour = now.getHours();
+      const minute = now.getMinutes().toString().padStart(2, "0");
+      const period = hour >= 12 ? '오후' : '오전';
+      const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+      const timestamp = `${period} ${displayHour}:${minute}`;
+
+      setMessages([
+        ...messages,
+        {
+          id: Date.now().toString(),
+          text: trimmedMessage,
+          isMine: true,
+          timestamp,
+        },
+      ]);
+      setNewMessage("");
+      textareaRef.current && (textareaRef.current.style.height = "auto");
+    } else {
+      toast.error('메시지 전송에 실패했습니다');
     }
-  };
+  } catch (error) {
+    console.error('메시지 전송 실패:', error);
+    toast.error('메시지 전송 중 오류가 발생했습니다');
+  }
+};
+
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
