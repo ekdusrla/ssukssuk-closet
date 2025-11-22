@@ -25,60 +25,63 @@ const BoardDetail = () => {
 
   // 게시판 이름 가져오기
   useEffect(() => {
-  const fetchBoardName = async () => {
-    try {
-      const res = await fetch("http://localhost:8080/board/");
-      const json = await res.json();
-      if (json.code === 200 && Array.isArray(json.data)) {
-        // id 기준으로 찾기
-        const board = json.data.find((b: any) => String(b.id) === id);
-        setBoardName(board?.name || "게시판");
-      } else {
+    const fetchBoardName = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/board/");
+        const json = await res.json();
+        if (json.code === 200 && Array.isArray(json.data)) {
+          const board = json.data.find((b: any) => String(b.id) === id);
+          setBoardName(board?.name || "게시판");
+        } else {
+          setBoardName("게시판");
+        }
+      } catch (err) {
+        console.error("Failed to fetch boards:", err);
         setBoardName("게시판");
       }
-    } catch (err) {
-      console.error("Failed to fetch boards:", err);
-      setBoardName("게시판");
-    }
-  };
-  fetchBoardName();
-}, [id]);
+    };
+    fetchBoardName();
+  }, [id]);
 
   // 게시판 글 목록 가져오기
   useEffect(() => {
-    if (!boardName) return;
+  if (!boardName) return;
 
-    const fetchPosts = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `http://localhost:8080/board/info?board_name=${encodeURIComponent(boardName)}`
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `http://localhost:8080/board/info?board_name=${encodeURIComponent(boardName)}`
+      );
+      const json = await res.json();
+
+      if (json.code === 200 && Array.isArray(json.data)) {
+        // data 안에 posts 배열이 있다면
+        const boardData = json.data.find((b: any) => b.name === boardName);
+        const postsArray = boardData?.posts || [];
+
+        setPosts(
+          postsArray.map((item: any) => ({
+            id: item.id,
+            writer: item.writer || "작성자 없음",
+            likeCount: item.liked || 0,
+            commentCount: item.comments || 0,
+          }))
         );
-        const json = await res.json();
-        if (json.code === 200 && Array.isArray(json.data)) {
-          // 백엔드 구조에 맞춰 변환
-          setPosts(
-            json.data.map((item: any) => ({
-              id: item.id,
-              writer: item.writer || "작성자 없음",
-              likeCount: item.liked || 0,
-              commentCount: item.comments || 0,
-            }))
-          );
-        } else {
-          setPosts([]);
-        }
-      } catch (err) {
-        console.error("Failed to fetch posts:", err);
+      } else {
         setPosts([]);
       }
-      setLoading(false);
-    };
+    } catch (err) {
+      console.error("Failed to fetch posts:", err);
+      setPosts([]);
+    }
+    setLoading(false);
+  };
 
-    fetchPosts();
-  }, [boardName]);
+  fetchPosts();
+}, [boardName]);
 
-  // 검색 필터 (title 없음 → id 기준)
+
   const filteredPosts = posts.filter(
     (post) =>
       post.writer?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -135,7 +138,7 @@ const BoardDetail = () => {
                 boardId={id || "1"}
                 post={{
                   id: post.id,
-                  title: `#${post.id} 글`, // title 없으므로 ID 기반 표시
+                  title: `#${post.id} 글`,
                   likeCount: post.likeCount,
                   commentCount: post.commentCount,
                 }}
