@@ -9,7 +9,7 @@ interface CommentItemProps {
 
 const CommentItem = ({ comment }: CommentItemProps) => {
   return (
-    <div className="p-4 bg-card rounded-lg">
+    <div>
       <div className="flex items-center justify-between mb-2">
         <span className="font-semibold text-sm">{comment.author}</span>
         <span className="text-xs text-muted-foreground">{comment.time}</span>
