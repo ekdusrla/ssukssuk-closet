@@ -1,4 +1,4 @@
-import { Users, Star } from "lucide-react";
+import { Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface BoardListItemProps {
@@ -6,21 +6,14 @@ interface BoardListItemProps {
     id: string;
     name: string;
     memberCount: number;
-    isFavorite: boolean;
   };
-  onToggleFavorite: (boardId: string) => void;
 }
 
-const BoardListItem = ({ board, onToggleFavorite }: BoardListItemProps) => {
+const BoardListItem = ({ board }: BoardListItemProps) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(`/board/${board.id}`);
-  };
-
-  const handleStarClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onToggleFavorite(board.id);
   };
 
   return (
@@ -35,11 +28,6 @@ const BoardListItem = ({ board, onToggleFavorite }: BoardListItemProps) => {
           <span>{board.memberCount.toLocaleString()}명</span>
         </div>
       </div>
-      <Star
-        size={20}
-        onClick={handleStarClick}
-        className={board.isFavorite ? "text-primary fill-primary cursor-pointer" : "text-muted-foreground cursor-pointer hover:text-primary"}
-      />
     </div>
   );
 };
