@@ -5,24 +5,19 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png";
 import { useAuth } from "@/hooks/useAuth";
 
 const loginSchema = z.object({
-  nickname: z.string()
+  nickname: z
+    .string()
     .trim()
     .min(1, { message: "닉네임을 입력해주세요" })
     .max(50, { message: "닉네임은 50자 이내로 입력해주세요" }),
-  pw: z.string()
+  pw: z
+    .string()
     .min(1, { message: "비밀번호를 입력해주세요" })
     .max(100, { message: "비밀번호는 100자 이내로 입력해주세요" }),
 });
@@ -43,16 +38,16 @@ const Login = () => {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const response = await fetch('/sign/in', {
-        method: 'POST',
+      const response = await fetch("http://3.35.8.64/sign/in", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
           nickname: data.nickname,
           pw: data.pw,
         }),
-        credentials: 'include',
+        credentials: "include",
       });
 
       const result = await response.json();
@@ -95,10 +90,7 @@ const Login = () => {
                   <FormItem>
                     <FormLabel>닉네임</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="닉네임을 입력하세요"
-                        {...field}
-                      />
+                      <Input placeholder="닉네임을 입력하세요" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -112,11 +104,7 @@ const Login = () => {
                   <FormItem>
                     <FormLabel>비밀번호</FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="비밀번호를 입력하세요"
-                        {...field}
-                      />
+                      <Input type="password" placeholder="비밀번호를 입력하세요" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
