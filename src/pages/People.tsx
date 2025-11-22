@@ -54,7 +54,7 @@ const People = () => {
               <CardContent className="p-4">
                 <div className="flex gap-3 mb-3">
                   <Avatar className="h-12 w-12 flex-shrink-0">
-                    <AvatarImage src={seller.avatar} />
+                    <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${seller.nickname}`} />
                     <AvatarFallback>{seller.nickname.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
