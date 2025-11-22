@@ -51,6 +51,11 @@ const MOCK_USER = {
     { id: 3, title: "따뜻한 패딩 점퍼", image: "/placeholder.svg", price: 35000, tags: ["아우터", "겨울"], description: "따뜻한 패딩입니다." },
     { id: 4, title: "귀여운 원피스", image: "/placeholder.svg", price: 18000, tags: ["원피스", "여아"], description: "귀여운 원피스입니다." },
   ],
+  likedProducts: [
+    { id: 5, title: "스트라이프 티셔츠", image: "/placeholder.svg", price: 13000, tags: ["상의", "캐주얼"], description: "스트라이프 티셔츠입니다." },
+    { id: 6, title: "데님 점퍼", image: "/placeholder.svg", price: 25000, tags: ["아우터", "캐주얼"], description: "데님 점퍼입니다." },
+    { id: 7, title: "체크 원피스", image: "/placeholder.svg", price: 20000, tags: ["원피스", "여아"], description: "체크 원피스입니다." },
+  ],
   posts: [
     { id: 1, board: "자유게시판", title: "아이 옷 정리 팁 공유해요" },
     { id: 2, board: "거래후기", title: "좋은 거래 감사합니다" },
@@ -478,6 +483,33 @@ const MyPage = () => {
             </div>
           </div>
 
+          {/* Liked Products Section */}
+          <div>
+            <h3 className="font-semibold mb-3">찜한 상품</h3>
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'thin' }}>
+              {userData.likedProducts.map((product) => (
+                <Card
+                  key={product.id}
+                  className="flex-shrink-0 w-36 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+                  onClick={() => navigate(`/products/${product.id}`)}
+                >
+                  <CardContent className="p-0">
+                    <AspectRatio ratio={1}>
+                      <img
+                        src={product.image}
+                        alt={product.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </AspectRatio>
+                  </CardContent>
+                  <div className="p-3">
+                    <p className="text-xs font-medium line-clamp-2">{product.title}</p>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+
           {/* Products Section */}
           <div>
             <div className="flex items-center justify-between mb-3">
@@ -531,7 +563,7 @@ const MyPage = () => {
                 <Card
                   key={post.id}
                   className={isEditMode ? "" : "cursor-pointer hover:shadow-md transition-shadow"}
-                  onClick={() => !isEditMode && navigate(`/board/${post.id}`)}
+                  onClick={() => !isEditMode && navigate(`/board/post/${post.id}`)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
