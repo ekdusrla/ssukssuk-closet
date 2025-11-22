@@ -88,9 +88,8 @@ const People = () => {
   };
 
   const getRandomTags = (tags: string[]) => {
-    const count = Math.floor(Math.random() * 2) + 2; // 2 or 3 tags
     const shuffled = [...tags].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, Math.min(count, tags.length));
+    return shuffled.slice(0, Math.min(2, tags.length));
   };
 
   return (
