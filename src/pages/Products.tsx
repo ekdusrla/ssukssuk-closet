@@ -31,25 +31,24 @@ const Products = () => {
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // 데이터 fetch
+  // 임시 데이터
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch("http://3.35.8.64:8080/product/");
-        const json = await res.json();
-        if (json.code === 200) {
-          setProducts(json.data);
-        } else {
-          console.error(json.message);
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
+    const mockProducts: ProductType[] = [
+      { title: "귀여운 아기 원피스", picture: "/placeholder.svg", price: 25000, size: 100, content: "상태 좋은 원피스입니다", tags: ["원피스/스커트", "활동적인", "사교적인"] },
+      { title: "여름 반팔티", picture: "/placeholder.svg", price: 15000, size: 90, content: "시원한 여름 티셔츠", tags: ["상의", "활동적인", "낙천적인"] },
+      { title: "아기 운동화", picture: "/placeholder.svg", price: 30000, size: 110, content: "편한 운동화", tags: ["신발", "활동적인", "모험적인"] },
+      { title: "겨울 패딩", picture: "/placeholder.svg", price: 45000, size: 100, content: "따뜻한 겨울 패딩", tags: ["아우터", "신중한", "안정적인"] },
+      { title: "청바지", picture: "/placeholder.svg", price: 20000, size: 100, content: "편한 청바지", tags: ["바지", "활동적인", "사교적인"] },
+      { title: "잠옷 세트", picture: "/placeholder.svg", price: 18000, size: 90, content: "부드러운 잠옷", tags: ["잠옷", "조용한", "감성적인"] },
+      { title: "세트 의류", picture: "/placeholder.svg", price: 35000, size: 100, content: "상하의 세트", tags: ["세트 의류", "창의적인", "사교적인"] },
+      { title: "모자", picture: "/placeholder.svg", price: 8000, size: 50, content: "귀여운 모자", tags: ["기타 악세서리", "호기심많은", "낙천적인"] },
+      { title: "유아복 로퍼", picture: "/placeholder.svg", price: 12000, size: 70, content: "12개월 이하 아기용", tags: ["12개월 이하", "내성적인", "안정적인"] },
+      { title: "꽃무늬 원피스", picture: "/placeholder.svg", price: 28000, size: 110, content: "예쁜 꽃무늬", tags: ["원피스/스커트", "감성적인", "창의적인"] },
+      { title: "티셔츠", picture: "/placeholder.svg", price: 12000, size: 100, content: "기본 티셔츠", tags: ["상의", "독립적인", "논리적인"] },
+      { title: "후드티", picture: "/placeholder.svg", price: 22000, size: 110, content: "따뜻한 후드티", tags: ["상의", "리더십", "협동적인"] },
+    ];
+    setProducts(mockProducts);
+    setLoading(false);
   }, []);
 
   const toggleKeyword = (keyword: string) => {
