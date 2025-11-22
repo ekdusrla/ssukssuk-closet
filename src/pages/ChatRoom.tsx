@@ -48,7 +48,7 @@ const ChatRoom = () => {
 
     const fetchMessages = async () => {
       try {
-        const response = await fetch('http://localhost:8080/chat/chat', {
+        const response = await fetch('http://3.35.8.64:8080/chat/chat', {
           credentials: 'include',
         });
 
@@ -99,7 +99,7 @@ const handleSendMessage = async () => {
   if (!trimmedMessage || !id) return;
 
   try {
-    const response = await fetch(`http://localhost:8080/chat/send`, {
+    const response = await fetch(`http://3.35.8.64:8080/chat/send`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },

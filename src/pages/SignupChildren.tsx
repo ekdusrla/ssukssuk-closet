@@ -10,7 +10,7 @@ const SignupChildren = () => {
   const handleNo = async () => {
     try {
       // 1) 회원가입
-      await fetch("http://localhost:8080/sign/up", {
+      await fetch("http://backend:8080/sign/up", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -20,7 +20,7 @@ const SignupChildren = () => {
       });
 
       // 2) 로그인 → session 쿠키 획득
-      await fetch("http://localhost:8080/sign/in", {
+      await fetch("http://backend:8080/sign/in", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -31,7 +31,7 @@ const SignupChildren = () => {
       });
 
       // 3) bio 업데이트
-      await fetch("http://localhost:8080/user/update_basic", {
+      await fetch("http://backend:8080/user/update_basic", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -39,7 +39,7 @@ const SignupChildren = () => {
       });
 
       // 4) location 업데이트
-      await fetch("http://localhost:8080/user/update_location", {
+      await fetch("http://backend:8080/user/update_location", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

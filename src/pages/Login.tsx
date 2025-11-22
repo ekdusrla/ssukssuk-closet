@@ -39,7 +39,7 @@ const Login = () => {
   const onSubmit = async (data: LoginFormValues) => {
     try {
 
-      const response = await fetch("http://localhost:8080/sign/in", {
+      const response = await fetch("http://3.35.8.64:8080/sign/in", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nickname: data.nickname, pw: data.pw }),

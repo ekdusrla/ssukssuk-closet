@@ -27,7 +27,7 @@ const BoardDetail = () => {
   useEffect(() => {
   const fetchBoardName = async () => {
     try {
-      const res = await fetch("http://localhost:8080/board/");
+      const res = await fetch("http://3.35.8.64:8080/board/");
       const json = await res.json();
       if (json.code === 200 && Array.isArray(json.data)) {
         // id 기준으로 찾기
@@ -52,7 +52,7 @@ const BoardDetail = () => {
       setLoading(true);
       try {
         const res = await fetch(
-          `http://localhost:8080/board/info?board_name=${encodeURIComponent(boardName)}`
+          `http://3.35.8.64:8080/board/info?board_name=${encodeURIComponent(boardName)}`
         );
         const json = await res.json();
         if (json.code === 200 && Array.isArray(json.data)) {

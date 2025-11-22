@@ -36,7 +36,7 @@ const Products = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const res = await fetch("http://localhost:8080/product/");
+        const res = await fetch("http://3.35.8.64:8080/product/");
         const json = await res.json();
         if (json.code === 200) {
           setProducts(json.data);

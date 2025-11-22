@@ -20,14 +20,14 @@ const SignupChildInfo = () => {
   const onSubmit = async (data) => {
     try {
       // 1) 회원가입
-      await fetch("http://localhost:8080/sign/up", {
+      await fetch("http://3.35.8.64:8080/sign/up", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nickname: state.nickname, pw: state.pw }),
       });
 
       // 2) 로그인
-      await fetch("http://localhost:8080/sign/in", {
+      await fetch("http://3.35.8.64:8080/sign/in", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -35,7 +35,7 @@ const SignupChildInfo = () => {
       });
 
       // 3) bio 업데이트
-      await fetch("http://localhost:8080/user/update_basic", {
+      await fetch("http://3.35.8.64:8080/user/update_basic", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -43,7 +43,7 @@ const SignupChildInfo = () => {
       });
 
       // 4) location 업데이트
-      await fetch("http://localhost:8080/user/update_location", {
+      await fetch("http://3.35.8.64:8080/user/update_location", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -51,7 +51,7 @@ const SignupChildInfo = () => {
       });
 
       // 5) baby 업데이트
-      await fetch("http://localhost:8080/user/update_baby", {
+      await fetch("http://3.35.8.64:8080/user/update_baby", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

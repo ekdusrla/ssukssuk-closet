@@ -46,7 +46,7 @@ const People = () => {
   useEffect(() => {
     const fetchSellers = async () => {
       try {
-        const res = await fetch("http://localhost:8080/user/get_sellers");
+        const res = await fetch("http://3.35.8.64:8080/user/get_sellers");
         const data = await res.json();
         if (data.code === 200 && data.data) setSellers(data.data);
         else console.error("Failed to fetch sellers:", data.message);
@@ -70,7 +70,7 @@ const People = () => {
   const openProductDetailDialog = async (product: Product) => {
     // FastAPI에서 상세 정보 가져오기
     const res = await fetch(
-      `http://localhost:8080/product/title?ti=${encodeURIComponent(product.title)}`
+      `http://3.35.8.64:8080/product/title?ti=${encodeURIComponent(product.title)}`
     );
     const data = await res.json();
     if (data.code === 200) {

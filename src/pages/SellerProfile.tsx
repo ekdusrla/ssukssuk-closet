@@ -45,7 +45,7 @@ const SellerProfile = () => {
     const fetchSeller = async () => {
       setLoading(true);
       try {
-        const res = await fetch("http://localhost:8080/user/get_sellers");
+        const res = await fetch("http://3.35.8.64:8080/user/get_sellers");
         const json = await res.json();
         if (json.code === 200) {
           // id에 맞는 판매자 선택

@@ -58,7 +58,7 @@ const MyPage = () => {
   // 로그인한 유저 정보 가져오기
   useEffect(() => {
     const loadUser = async () => {
-      const res = await fetch("http://localhost:8080/user/me", {
+      const res = await fetch("http://3.35.8.64:8080/user/me", {
         credentials: "include",
       });
       const result = await res.json();
@@ -80,7 +80,7 @@ const MyPage = () => {
       idx: userData.products.findIndex((p) => p.title === selectedProduct.title),
     };
 
-    await fetch("http://localhost:8080/user/update_clothes", {
+    await fetch("http://3.35.8.64:8080/user/update_clothes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -107,7 +107,7 @@ const MyPage = () => {
       idx: -1,
     };
 
-    await fetch("http://localhost:8080/user/update_clothes", {
+    await fetch("http://3.35.8.64:8080/user/update_clothes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -137,7 +137,7 @@ const MyPage = () => {
   const openProductDetailDialog = async (product: ProductType) => {
     // FastAPI에서 상세 정보 가져오기
     const res = await fetch(
-      `http://localhost:8080/product/title?ti=${encodeURIComponent(product.title)}`
+      `http://3.35.8.64:8080/product/title?ti=${encodeURIComponent(product.title)}`
     );
     const data = await res.json();
     if (data.code === 200) {

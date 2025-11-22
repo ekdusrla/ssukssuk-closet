@@ -21,7 +21,7 @@ const BoardPost = () => {
     const fetchPost = async () => {
       if (!postId) return;
       try {
-        const res = await fetch(`http://localhost:8080/board/content?board_id=${postId}`);
+        const res = await fetch(`http://3.35.8.64:8080/board/content?board_id=${postId}`);
         const json = await res.json();
         if (json.code === 200) {
           setPost(json.data);
