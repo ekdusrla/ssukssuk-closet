@@ -20,7 +20,7 @@ const Board = () => {
   useEffect(() => {
     const fetchBoards = async () => {
       try {
-        const res = await fetch("/board/");
+        const res = await fetch("http://localhost:8080/board/");
         const json = await res.json();
 
         if (json.code === 200 && Array.isArray(json.data)) {
